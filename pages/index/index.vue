@@ -22,6 +22,7 @@ export default {
 		...mapState(['hasLogin'])
 	},
 	onLoad() {
+		return;
 		if (!this.hasLogin) {
 			uni.reLaunch({
 				url: '../login/login'
@@ -29,17 +30,17 @@ export default {
 		}
 	},
 	methods: {
-		scanQR(e) {
+		async scanQR(e) {
 			console.log(e);
 
 			uni.scanCode({
 				//onlyFromCamera: true,
-				success: function(res) {
+				success: res => {
 					console.log('条码类型：' + res.scanType);
 					console.log('条码内容：' + res.result);
 				},
-				fail: function(res) {
-					console.log(res);
+				fail: err =>  {
+					console.log(err);
 				}
 			});
 		},

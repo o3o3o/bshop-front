@@ -52,6 +52,9 @@ export default {
 					console.log('login success:', res);
 					// 更新保存在 store 中的登录状态
 					this.login(provider.id);
+					uni.navigateTo({
+						url: "../index/index"
+					})
 				},
 				fail: err => {
 					console.log('login fail:', err);
