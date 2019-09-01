@@ -22,10 +22,10 @@ export default {
 		...mapState(['hasLogin'])
 	},
 	onLoad() {
-		return;
+		console.log('login status: ', this.hasLogin);
 		if (!this.hasLogin) {
 			uni.reLaunch({
-				url: '../login/login'
+				url: '/pages/login/login'
 			});
 		}
 	},

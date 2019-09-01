@@ -13,20 +13,11 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
+		}, {
+			"path": "pages/wallet/wallet",
+			"style": {}
 		}
-	    ,{
-            "path" : "pages/cart/cart",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/category/category",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/order/order",
-            "style" : {}
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "聚赢农产品",
@@ -34,35 +25,35 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-	        "color": "#C0C4CC",
-	        "selectedColor": "#fa436a",
-	        "borderStyle": "black",
-	        "backgroundColor": "#ffffff",
-	        "list": [{
-	                "pagePath": "pages/index/index",
-	                "iconPath": "static/tab-home.png",
-	                "selectedIconPath": "static/tab-home-current.png",
-	                "text": "首页"
-	            },
-				
-	            // {
-	            //     "pagePath": "pages/category/category",
-	            //     "iconPath": "static/tab-cate.png",
-	            //     "selectedIconPath": "static/tab-cate-current.png",
-	            //     "text": "分类"
-	            // },
-	            // {
-	            //     "pagePath": "pages/cart/cart",
-	            //     "iconPath": "static/tab-cart.png",
-	            //     "selectedIconPath": "static/tab-cart-current.png",
-	            //     "text": "购物车"
-	            // },
-	            {
-	                "pagePath": "pages/me/me",
-	                "iconPath": "static/tab-my.png",
-	                "selectedIconPath": "static/tab-my-current.png",
-	                "text": "我的"
-	            }
-	        ]
-	    }
+		"color": "#C0C4CC",
+		"selectedColor": "#fa436a",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tab-home.png",
+				"selectedIconPath": "static/tab-home-current.png",
+				"text": "首页"
+			},
+
+			// {
+			//     "pagePath": "pages/category/category",
+			//     "iconPath": "static/tab-cate.png",
+			//     "selectedIconPath": "static/tab-cate-current.png",
+			//     "text": "分类"
+			// },
+			// {
+			//     "pagePath": "pages/cart/cart",
+			//     "iconPath": "static/tab-cart.png",
+			//     "selectedIconPath": "static/tab-cart-current.png",
+			//     "text": "购物车"
+			// },
+			{
+				"pagePath": "pages/me/me",
+				"iconPath": "static/tab-my.png",
+				"selectedIconPath": "static/tab-my-current.png",
+				"text": "我的"
+			}
+		]
+	}
 }

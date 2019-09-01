@@ -12,6 +12,7 @@ import { mapState, mapMutations } from 'vuex';
 export default {
 	data() {
 		return {
+			userInfo: {},
 			providerList: []
 		};
 	},
@@ -48,15 +49,17 @@ export default {
 				// #ifdef MP-ALIPAY
 				scopes: 'auth_user', //支付宝小程序需设置授权类型
 				// #endif
-				success: res => {
+				success: (res) => {
 					console.log('login success:', res);
 					// 更新保存在 store 中的登录状态
 					this.login(provider.id);
-					uni.navigateTo({
-						url: "../index/index"
+					
+					console.log('start to back to index....')
+					uni.reLaunch({
+						url: "/pages/index/index"
 					})
 				},
-				fail: err => {
+				fail: (err) => {
 					console.log('login fail:', err);
 				}
 			});

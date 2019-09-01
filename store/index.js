@@ -7,12 +7,35 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		loginProvider: "",
-		openid: null
+		openid: null,
+		// userInfo: {}
 	},
 	mutations: {
 		login(state, provider) {
 			state.hasLogin = true;
 			state.loginProvider = provider;
+
+			// console.log(state.userInfo);
+			console.log('login store: ', state);
+			this.commit('updateUserInfo', provider);
+		},
+		updateUserInfo(state, provider) {
+			uni.getUserInfo({
+				provider: provider,
+				success: function(infoRes) {
+					console.log(infoRes);
+					console.log('用户:', infoRes.userInfo);
+					uni.setStorage({
+						key: 'userInfo',
+						data: {
+							'avatarUrl': infoRes.userInfo.avatarUrl,
+							'nickName': infoRes.userInfo.nickName,
+							'gender': infoRes.userInfo.gender,
+						},
+					})
+					console.log('用户昵称为：' + infoRes.userInfo.nickName);
+				}
+			});
 		},
 		logout(state) {
 			state.hasLogin = false
@@ -23,8 +46,9 @@ const store = new Vuex.Store({
 		}
 	},
 	actions: {
+
 		// lazy loading openid
-		getUserOpenId: async function ({
+		getUserOpenId: async function({
 			commit,
 			state
 		}) {
@@ -35,7 +59,7 @@ const store = new Vuex.Store({
 					uni.login({
 						success: (data) => {
 							commit('login')
-							setTimeout(function () { //模拟异步请求服务器获取 openid
+							setTimeout(function() { //模拟异步请求服务器获取 openid
 								const openid = '123456789'
 								console.log('uni.request mock openid[' + openid + ']');
 								commit('setOpenid', openid)

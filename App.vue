@@ -2,6 +2,7 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			//TODO: checkSession 检查登录状过期情况
 		},
 		onShow: function() {
 			console.log('App Show')
