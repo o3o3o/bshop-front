@@ -5,10 +5,22 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
+		forcedLogin: true,
 		hasLogin: false,
 		loginProvider: "",
 		openid: null,
-		// userInfo: {}
+		userInfo: {}
+	},
+	getters: {
+		getUserInfo(state) {
+			return uni.getStorage({
+				key: 'userInfo',
+				success: function(res) {
+					console.log('get user info', res.data);
+					return res.data;
+				}
+			});
+		},
 	},
 	mutations: {
 		login(state, provider) {
@@ -16,24 +28,29 @@ const store = new Vuex.Store({
 			state.loginProvider = provider;
 
 			// console.log(state.userInfo);
-			console.log('login store: ', state);
+			// console.log('login store: ', state);
 			this.commit('updateUserInfo', provider);
 		},
+
 		updateUserInfo(state, provider) {
-			uni.getUserInfo({
+			return uni.getUserInfo({
 				provider: provider,
 				success: function(infoRes) {
-					console.log(infoRes);
-					console.log('用户:', infoRes.userInfo);
-					uni.setStorage({
-						key: 'userInfo',
-						data: {
+					// console.log(infoRes);
+					// console.log('用户:', infoRes.userInfo);
+					let userInfo = {
 							'avatarUrl': infoRes.userInfo.avatarUrl,
 							'nickName': infoRes.userInfo.nickName,
 							'gender': infoRes.userInfo.gender,
-						},
-					})
-					console.log('用户昵称为：' + infoRes.userInfo.nickName);
+							'country': infoRes.userInfo.country
+						};
+					uni.setStorage({
+						key: 'userInfo',
+						data: userInfo,
+					});
+					state.userInfo = userInfo;
+					
+					console.log('Updated userinfo：' + state.userInfo);
 				}
 			});
 		},

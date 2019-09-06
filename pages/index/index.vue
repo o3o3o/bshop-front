@@ -13,19 +13,33 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-	data () {
-		return {
-
-		}
+	data() {
+		return {};
 	},
 	computed: {
-		...mapState(['hasLogin'])
+		...mapState(['forcedLogin', 'hasLogin'])
 	},
 	onLoad() {
 		console.log('login status: ', this.hasLogin);
+		console.log('forecedLogin: ', this.forcedLogin);
 		if (!this.hasLogin) {
-			uni.reLaunch({
-				url: '/pages/login/login'
+			uni.showModal({
+				title: '未登录',
+				content: '您未登录，需要登录后才能继续',
+				showCancel: !this.forcedLogin,
+				success: (res) => {
+					if (res.confirm) {
+						if (this.forcedLogin) {
+							uni.reLaunch({
+								url: '/pages/login/login'
+							});
+						} else {
+							uni.navigateTo({
+								url: '/pages/login/login'
+							});
+						}
+					}
+				}
 			});
 		}
 	},
@@ -39,7 +53,7 @@ export default {
 					console.log('条码类型：' + res.scanType);
 					console.log('条码内容：' + res.result);
 				},
-				fail: err =>  {
+				fail: err => {
 					console.log(err);
 				}
 			});

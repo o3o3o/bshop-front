@@ -3,12 +3,12 @@
 		<view class="user-section">
 			<image class="bg" src="/static/user-bg.jpg"></image>
 			<view class="user-info-box">
-				<view class="portrait-box"><image class="portrait" :src="userInfo.portrait || '/static/missing-face.png'"></image></view>
+				<view class="portrait-box"><image class="portrait" :src="userInfo.avatarUrl || '/static/missing-face.png'"></image></view>
 				<view class="info-box">
-					<text class="username">{{ userInfo.nickname || '游客' }}</text>
+					<text class="username">{{ userInfo.nickName || '游客' }}</text>
 				</view>
-				
 			</view>
+
 			<view class="vip-card-box">
 				<image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
 				<view class="b-btn">立即充值</view>
@@ -28,7 +28,7 @@
 					transform: coverTransform,
 					transition: coverTransition
 				}
-			]"		 
+			]"
 		>
 			<image class="arc" src="/static/arc.png"></image>
 
@@ -78,27 +78,10 @@ export default {
 			moving: false
 		};
 	},
-	onLoad() {},
-	// #ifndef MP
-	onNavigationBarButtonTap(e) {
-		const index = e.index;
-		if (index === 0) {
-			this.navTo('/pages/set/set');
-		} else if (index === 1) {
-			// #ifdef APP-PLUS
-			const pages = getCurrentPages();
-			const page = pages[pages.length - 1];
-			const currentWebview = page.$getAppWebview();
-			currentWebview.hideTitleNViewButtonRedDot({
-				index
-			});
-			// #endif
-			uni.navigateTo({
-				url: '/pages/notice/notice'
-			});
-		}
+	onLoad() {
+		// console.log('Me: ', this.userInfo);
 	},
-	// #endif
+
 	computed: {
 		...mapState(['hasLogin', 'userInfo'])
 	},
