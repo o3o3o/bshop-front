@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "tki-qrcode": "^0.1.6"
+    "@kqtec/graphql-uni-app-client": "github:kqtec/graphql-uni-app-client",
+    "tki-qrcode": "^0.1.6",
+    "weapp-cookie": "^1.4.0"
   },
   "devDependencies": {},
   "scripts": {

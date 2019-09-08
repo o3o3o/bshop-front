@@ -12,6 +12,8 @@
 
 <script>
 import { mapState } from 'vuex';
+import { verifyCode, requestVerificationCode } from '@/api/gql'
+
 export default {
 	data() {
 		return {};
@@ -20,6 +22,10 @@ export default {
 		...mapState(['forcedLogin', 'hasLogin'])
 	},
 	onLoad() {
+		var phone = '+8613812345678';
+		
+		requestVerificationCode(phone);
+		verifyCode(phone, '123456');
 		console.log('login status: ', this.hasLogin);
 		console.log('forecedLogin: ', this.forcedLogin);
 		if (!this.hasLogin) {
@@ -27,7 +33,7 @@ export default {
 				title: '未登录',
 				content: '您未登录，需要登录后才能继续',
 				showCancel: !this.forcedLogin,
-				success: (res) => {
+				success: res => {
 					if (res.confirm) {
 						if (this.forcedLogin) {
 							uni.reLaunch({

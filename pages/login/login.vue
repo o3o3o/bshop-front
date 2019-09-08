@@ -49,17 +49,33 @@ export default {
 				// #ifdef MP-ALIPAY
 				scopes: 'auth_user', //支付宝小程序需设置授权类型
 				// #endif
-				success: (res) => {
+				success: res => {
 					console.log('login success:', res);
+					// res 对象格式
+					// {    
+					//     "code":"***",
+					//     "authResult":{
+					//         "openid":"***",
+					//         "scope":"snsapi_userinfo",
+					//         "refresh_token":"**",
+					//         "code":"****",
+					//         "unionid":"***",
+					//         "access_token":"***",
+					//         "expires_in":7200
+					//     },
+					//     "errMsg":"login:ok"
+					// }
+					//"errMsg":"login:ok"}
+					//TODO: send code to server
 					// 更新保存在 store 中的登录状态
 					this.login(provider.id);
-					
-					console.log('start to back to index....')
+
+					console.log('start to back to index....');
 					uni.reLaunch({
-						url: "/pages/index/index"
-					})
+						url: '/pages/index/index'
+					});
 				},
-				fail: (err) => {
+				fail: err => {
 					console.log('login fail:', err);
 				}
 			});

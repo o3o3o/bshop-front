@@ -38,6 +38,18 @@ const store = new Vuex.Store({
 				success: function(infoRes) {
 					// console.log(infoRes);
 					// console.log('用户:', infoRes.userInfo);
+					 // res 对象格式
+					                        //{"code":"***",
+					                        //"authResult":{
+					                            //"openid":"***",
+					                            //"scope":"snsapi_userinfo",
+					                            //"refresh_token":"**",
+					                            //"code":"****",
+					                            //"unionid":"***",
+					                            //"access_token":"***",
+					                            //"expires_in":7200
+					                        //},
+					                        //"errMsg":"login:ok"}
 					let userInfo = {
 							'avatarUrl': infoRes.userInfo.avatarUrl,
 							'nickName': infoRes.userInfo.nickName,
