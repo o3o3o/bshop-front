@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import { verifyCode, requestVerificationCode } from '@/api/gql'
 
 export default {
@@ -19,37 +19,45 @@ export default {
 		return {};
 	},
 	computed: {
-		...mapState(['forcedLogin', 'hasLogin'])
+		...mapState(['loginProvider', 'hasLogin'])
 	},
 	onLoad() {
 		var phone = '+8613812345678';
 		
-		requestVerificationCode(phone);
-		verifyCode(phone, '123456');
-		console.log('login status: ', this.hasLogin);
-		console.log('forecedLogin: ', this.forcedLogin);
-		if (!this.hasLogin) {
-			uni.showModal({
-				title: '未登录',
-				content: '您未登录，需要登录后才能继续',
-				showCancel: !this.forcedLogin,
-				success: res => {
-					if (res.confirm) {
-						if (this.forcedLogin) {
-							uni.reLaunch({
-								url: '/pages/login/login'
-							});
-						} else {
-							uni.navigateTo({
-								url: '/pages/login/login'
-							});
-						}
-					}
-				}
-			});
-		}
+		//requestVerificationCode(phone);
+		//verifyCode(phone, '123456');
+        this.isLogin();
 	},
 	methods: {
+		...mapMutations(['updateUserInfo']),
+
+        isLogin() {
+            //#ifndef MP
+            this.login();
+            //#endif
+            uni.showLoading({
+                title:'登录中...'
+            });
+            var that = this;
+            uni.getUserInfo({
+                provider: that.loginProvider,
+                success: function (res) {
+                    console.log('用户昵称为：' + res.userInfo.nickName);
+                    //TODO: update user info to server
+                    that.updateUserInfo(res);
+                },fail(err) {
+                    console.log(err);
+                    that.login()
+                },complete() {
+                    uni.hideLoading();
+                }
+            });
+        },
+        login(){
+            uni.reLaunch({
+                url:'/pages/login/login'
+            })
+        },
 		async scanQR(e) {
 			console.log(e);
 
