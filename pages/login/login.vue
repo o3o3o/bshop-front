@@ -17,6 +17,8 @@
 
 <script>
 import wsAuth from "@/components/wsure-authorize/authorize.vue";
+import { verifyCodeApi, requestVerificationCode } from "@/api/auth";
+var util = require("@/common/util.js");
 import { mapState, mapMutations } from "vuex";
 export default {
   data() {
@@ -30,25 +32,38 @@ export default {
   },
   onLoad() {},
   computed: {
-    ...mapState(["hasLogin"])
+    ...mapState(["hasLogin", "openid"])
   },
   methods: {
     sendVerifyCode(e) {
       console.log(e.phoneNumber);
-      //模拟发送请求 1：成功发送，2：发送失败（若发送失败，请自行处理相关提示）
-      setTimeout(() => {
-        this.isSendPin = 1;
-      }, 1000);
+      requestVerificationCode(e.phoneNumber)
+        .then(() => {
+          //1：成功发送
+          this.isSendPin = 1;
+        })
+        .catch(err => {
+          //2：发送失败（若发送失败，请自行处理相关提示）
+          console.error("Error for sendVerifyCode: ", err);
+          this.isSendPin = 2;
+        });
     },
 
     verifyCode(e) {
       console.log(e.phoneNumber + " _ " + e.code);
-      //模拟发送请求 1：成功发送，2：发送失败（若发送失败，请自行处理相关提示）
-      this.hasLogin = true;
-      this.$store.dispatch("getUserOpenId");
-      setTimeout(() => {
-        this.isChecked = 1;
-      }, 1000);
+      verifyCodeApi(e.phoneNumber, e.code)
+        .then(() => {
+          //模拟发送请求 1：成功发送，2：发送失败（若发送失败，请自行处理相关提示）
+          this.isChecked = 1;
+          this.hasLogin = true;
+          this.$store.dispatch("getUserOpenId");
+          //TODO: bind with auth_code
+          console.log("open_id: ", this.openid);
+        })
+        .catch(err => {
+          util.showTip(err);
+          this.isChecked = 2;
+        });
     }
   }
 };

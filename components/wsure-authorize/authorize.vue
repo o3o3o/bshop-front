@@ -1,256 +1,304 @@
 <template>
-	<view class="myCenter" style="margin-top:150upx ;">
-		<swiper class="mySwiper" :indicator-dots="true" :autoplay="false" :current="swiperCurrent" @change="swiperChange">
-			<swiper-item class="myCenter">
-				<view class="logo">
-					<view class="img">
-						<image mode="widthFix" :src="Style"></image>
-					</view>
-				</view>
-				<view class="form re">
-					<view class="res">
-						<view>{{NickName}}</view>
-					</view>
-					<button v-if="!(userInfo && userInfo.nickName)" class="btn" open-type="getUserInfo" @getuserinfo="getUserInfoData">获取个人信息</button>
-					<button v-else="" class="btn" @tap="nextSwiper(1)">下一步</button>
-				</view>
-			</swiper-item>
-			<swiper-item class="myCenter">
-				<view class="form re">
-					<view class="username">
-						<view class="get-code" :style="{'color':getCodeBtnColor}" @click.stop="getCode()">{{getCodeText}}</view>
-						<input placeholder="请输入手机号" v-model="phoneNumber" placeholder-style="color: rgba(255,255,255,0.8);"/>
-					</view>
-					<view class="code">
-						<input placeholder="请输入验证码" v-model="code" placeholder-style="color: rgba(255,255,255,0.8);"/>
-					</view>
-					<!-- <view class="password">
+  <view class="myCenter" style="margin-top:150upx ;">
+    <swiper
+      class="mySwiper"
+      :indicator-dots="false"
+      :autoplay="false"
+      :current="swiperCurrent"
+      @change="swiperChange"
+    >
+      <swiper-item class="myCenter">
+        <view class="logo">
+          <view class="img">
+            <image mode="widthFix" :src="Style"></image>
+          </view>
+        </view>
+        <view class="form re">
+          <view class="res">
+            <view>{{ NickName }}</view>
+          </view>
+          <button
+            v-if="!(userInfo && userInfo.nickName)"
+            class="btn"
+            open-type="getUserInfo"
+            @getuserinfo="getUserInfoData"
+          >
+            获取个人信息
+          </button>
+          <button v-else="" class="btn" @tap="nextSwiper(1)">下一步</button>
+        </view>
+      </swiper-item>
+      <swiper-item class="myCenter">
+        <view class="form re">
+          <view class="username">
+            <view
+              class="get-code"
+              :style="{ color: getCodeBtnColor }"
+              @click.stop="getCode()"
+              >{{ getCodeText }}</view
+            >
+            <input
+              placeholder="请输入手机号"
+              v-model="phoneNumber"
+              placeholder-style="color: rgba(255,255,255,0.8);"
+            />
+          </view>
+          <view class="code">
+            <input
+              placeholder="请输入验证码"
+              v-model="code"
+              placeholder-style="color: rgba(255,255,255,0.8);"
+            />
+          </view>
+          <!-- <view class="password">
 						<input placeholder="请输入密码" v-model="passwd" password=true placeholder-style="color: rgba(255,255,255,0.8);"/>
 					</view> -->
-					<button class="btn" @tap="doReg" v-if="phoneNumberChecked !== 1">立即绑定</button>
-					<button class="btn" @tap="nextSwiper(2)" v-if="phoneNumberChecked === 1">下一步</button>
-					<!-- <view class="res">
+          <button class="btn" @tap="doReg" v-if="phoneNumberChecked !== 1">
+            立即绑定
+          </button>
+          <button
+            class="btn"
+            @tap="nextSwiper(2)"
+            v-if="phoneNumberChecked === 1"
+          >
+            下一步
+          </button>
+          <!-- <view class="res">
 						<view @tap="toLogin">已有账号立即登录</view>
 					</view> -->
-				</view>
-			</swiper-item>
-			<swiper-item class="myCenter">
-				<view class="form re">
-					<block v-if="!HasAuth">
-						<view class="res">
-							<view>您还没有授权</view>
-						</view>
-						<button class="btn" @tap="nextSwiper(0)" v-if="phoneNumberChecked !== 1">去授权</button>
-					</block>
-					<block v-if="phoneNumberChecked !== 1">
-						<view class="res">
-							<view>您还没有绑定手机号</view>
-						</view>
-						<button class="btn" @tap="nextSwiper(1)" v-if="phoneNumberChecked !== 1">去绑定</button>
-					</block>
-					<block v-if="phoneNumberChecked === 1 && HasAuth">
-						<view class="logo">
-							<view class="img">
-								<image mode="widthFix" :src="Style"></image>
-							</view>
-						</view>
-						<view class="res">{{NickName}}</view>
-						<view class="res">
-							
-							<view>恭喜您已完成注册！</view>
-						</view>
-						<button class="btn" @tap="toIndex()">回到首页</button>
-					</block>
-				</view>
-			</swiper-item>
-		</swiper>
-	</view>
+        </view>
+      </swiper-item>
+      <swiper-item class="myCenter">
+        <view class="form re">
+          <block v-if="!HasAuth">
+            <view class="res">
+              <view>您还没有授权</view>
+            </view>
+            <button
+              class="btn"
+              @tap="nextSwiper(0)"
+              v-if="phoneNumberChecked !== 1"
+            >
+              去授权
+            </button>
+          </block>
+          <block v-if="phoneNumberChecked !== 1">
+            <view class="res">
+              <view>您还没有绑定手机号</view>
+            </view>
+            <button
+              class="btn"
+              @tap="nextSwiper(1)"
+              v-if="phoneNumberChecked !== 1"
+            >
+              去绑定
+            </button>
+          </block>
+          <block v-if="phoneNumberChecked === 1 && HasAuth">
+            <view class="logo">
+              <view class="img">
+                <image mode="widthFix" :src="Style"></image>
+              </view>
+            </view>
+            <view class="res">{{ NickName }}</view>
+            <view class="res">
+              <view>恭喜您已完成注册！</view>
+            </view>
+            <button class="btn" @tap="toIndex()">回到首页</button>
+          </block>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
 </template>
 
 <script>
-	import { mapState, mapMutations } from 'vuex';
-	export default {
-		props:{
-			headimg:{
-				type:String,
-				default:'data:image/png;base64,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'
-			},
-			userName:{
-				type:String,
-				default:'未登录'
-			},
-			phoneNumberChecked:{
-				type:Number,
-				default:0
-			},
-			pinSended:{
-				type:Number,
-				default:0
-			},
-			codeLength:{
-				type:Number,
-				default:6
-			},
-			url:{
-				type:String,
-				default:'/pages/index/index'
-			}
-		},
-		data() {
-			return {
-				swiperCurrent:0,
-				phoneNumber:"",
-				code:'',
-				passwd:"",
-				getCodeText:'获取验证码',
-				getCodeBtnColor:"#ffffff",
-				getCodeisWaiting:false,
-			}
-		},
-		onLoad() {
+import { mapState, mapMutations } from "vuex";
+export default {
+  props: {
+    headimg: {
+      type: String,
+      default:
+        "data:image/png;base64,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"
+    },
+    userName: {
+      type: String,
+      default: "未登录"
+    },
+    phoneNumberChecked: {
+      type: Number,
+      default: 0
+    },
+    pinSended: {
+      type: Number,
+      default: 0
+    },
+    codeLength: {
+      type: Number,
+      default: 6
+    },
+    url: {
+      type: String,
+      default: "/pages/index/index"
+    }
+  },
+  data() {
+    return {
+      swiperCurrent: 0,
+      phoneNumber: "13812345678",
+      code: "123456",
+      passwd: "",
+      getCodeText: "获取验证码",
+      getCodeBtnColor: "#ffffff",
+      getCodeisWaiting: false
+    };
+  },
+  onLoad() {},
+  computed: {
+    ...mapState(["userInfo", "hasLogin"]),
 
-		},
-		computed:{
-			...mapState(['userInfo', 'hasLogin']),
-			
-			Style(){
-				var headimg = this.userInfo && this.userInfo.avatarUrl?this.userInfo.avatarUrl:this.headimg;
-				// var style = `background-image:url(${headimg});`;
-				return headimg;
-			},
-			NickName(){
-				var nickName = this.userInfo && this.userInfo.nickName?this.userInfo.nickName:this.userName;
-				return nickName;
-			},
-			HasAuth(){
-				return this.userInfo && this.hasLogin;
-			}
-		},
-		watch:{
-			phoneNumberChecked(newValue,OldValue){
-				if(newValue === 1){
-					uni.hideLoading()
-					uni.showToast({title: '注册成功',icon:"success"});
-				} 
-				if(newValue === 2) {
-					uni.showToast({title: '注册失败',icon:"success"});
-				}
-			},
-			pinSended(nv,ov){
-				if(nv === 1){
-					uni.showToast({title: '验证码已发送',icon:"none"});
-					this.setTimer();
-				} 
-				if(nv === 2){
-					uni.showToast({title: '验证码发送失败',icon:"none"});
-				}
-			}
-		},
-		methods: {
-			swiperChange(e){
-				console.log(e)
-				this.swiperCurrent = e.detail.current;
-			},
-			Timer(){},
-			getCode(){
-				uni.hideKeyboard()
-				if(this.getCodeisWaiting){
-					return ;
-				}
-				if(!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.phoneNumber))){ 
-					uni.showToast({title: '请填写正确手机号码',icon:"none"});
-					return false; 
-				} 
-				this.getCodeText = "发送中..."
-				this.getCodeisWaiting = true;
-				this.getCodeBtnColor = "rgba(255,255,255,0.5)"
-				this.$emit("sendPin",{
-					phoneNumber:this.phoneNumber
-				});
-			},
-			setTimer(){
-				let holdTime = 60;
-				this.getCodeText = "重新获取(60)"
-				this.Timer = setInterval(()=>{
-					if(holdTime<=0){
-						this.getCodeisWaiting = false;
-						this.getCodeBtnColor = "#ffffff";
-						this.getCodeText = "获取验证码"
-						clearInterval(this.Timer);
-						return ;
-					}
-					this.getCodeText = "重新获取("+holdTime+")"
-					holdTime--;
-					
-				},1000)
-			},
-			doReg(){
-				uni.hideKeyboard()
-				if(this.pinSended !== 1){
-					uni.showToast({title: '请先获取验证码',icon:"none"});
-					return false; 
-				}
-				//模板示例部分验证规则
-				if(!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.phoneNumber))){ 
-					uni.showToast({title: '请填写正确手机号码',icon:"none"});
-					return false; 
-				} 
-				//非空校验
-				if(this.code===''){ 
-					uni.showToast({title: '验证码不能为空',icon:"none"});
-					return false; 
-				}
-				let regstr = new RegExp('\\d{'+parseInt(this.codeLength)+'}') ;
-				if(!(regstr.test(this.code))){ 
-					uni.showToast({title: '验证码不正确',icon:"none"});
-					return false; 
-				}
-				uni.showLoading({
-					title: '提交中...'
-				})
-				this.$emit("checkPhoneNumber",{
-					phoneNumber:this.phoneNumber,
-					code:this.code
-				});
-			},
-			toIndex(){ 
-				console.log('toindex');
-				uni.hideKeyboard();
-				uni.redirectTo({url: this.url});
-				uni.navigateBack();
-			},
-			nextSwiper(index){
-				this.swiperCurrent = index;
-			},
-			getUserInfoData(e){
-				//console.log(e);
-				this.userInfo = e.detail.userInfo;
-			}
-		},
-		mounted() {
-			// 获取用户信息
-			if(!this.userInfo || !this.userInfo.nickName)
-			{
-				//#ifdef MP
-				uni.showLoading({
-					title:'加载中...'
-				})
-				//#endif
-				uni.getUserInfo({
-					provider: 'weixin',
-					success: (infoRes) =>{
-						this.userInfo = infoRes.userInfo;
-					},
-					fail:function(res){
-					},complete() {
-						uni.hideLoading()
-					}
-				});
-			}
-		}
-	}
+    Style() {
+      var headimg =
+        this.userInfo && this.userInfo.avatarUrl
+          ? this.userInfo.avatarUrl
+          : this.headimg;
+      // var style = `background-image:url(${headimg});`;
+      return headimg;
+    },
+    NickName() {
+      var nickName =
+        this.userInfo && this.userInfo.nickName
+          ? this.userInfo.nickName
+          : this.userName;
+      return nickName;
+    },
+    HasAuth() {
+      return this.userInfo && this.hasLogin;
+    }
+  },
+  watch: {
+    phoneNumberChecked(newValue, OldValue) {
+      if (newValue === 1) {
+        uni.hideLoading();
+        uni.showToast({ title: "注册成功", icon: "success" });
+      }
+      if (newValue === 2) {
+        uni.showToast({ title: "注册失败", icon: "success" });
+      }
+    },
+    pinSended(nv, ov) {
+      if (nv === 1) {
+        uni.showToast({ title: "验证码已发送", icon: "none" });
+        this.setTimer();
+      }
+      if (nv === 2) {
+        uni.showToast({ title: "验证码发送失败", icon: "none" });
+      }
+    }
+  },
+  methods: {
+    swiperChange(e) {
+      console.log(e);
+      this.swiperCurrent = e.detail.current;
+    },
+    Timer() {},
+    getCode() {
+      uni.hideKeyboard();
+      if (this.getCodeisWaiting) {
+        return;
+      }
+      if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.phoneNumber)) {
+        uni.showToast({ title: "请填写正确手机号码", icon: "none" });
+        return false;
+      }
+      this.getCodeText = "发送中...";
+      this.getCodeisWaiting = true;
+      this.getCodeBtnColor = "rgba(255,255,255,0.5)";
+      this.$emit("sendPin", {
+        phoneNumber: this.phoneNumber
+      });
+    },
+    setTimer() {
+      let holdTime = 60;
+      this.getCodeText = "重新获取(60)";
+      this.Timer = setInterval(() => {
+        if (holdTime <= 0) {
+          this.getCodeisWaiting = false;
+          this.getCodeBtnColor = "#ffffff";
+          this.getCodeText = "获取验证码";
+          clearInterval(this.Timer);
+          return;
+        }
+        this.getCodeText = "重新获取(" + holdTime + ")";
+        holdTime--;
+      }, 1000);
+    },
+    doReg() {
+      uni.hideKeyboard();
+      if (this.pinSended !== 1) {
+        uni.showToast({ title: "请先获取验证码", icon: "none" });
+        return false;
+      }
+      //模板示例部分验证规则
+      if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.phoneNumber)) {
+        uni.showToast({ title: "请填写正确手机号码", icon: "none" });
+        return false;
+      }
+      //非空校验
+      if (this.code === "") {
+        uni.showToast({ title: "验证码不能为空", icon: "none" });
+        return false;
+      }
+      let regstr = new RegExp("\\d{" + parseInt(this.codeLength) + "}");
+      if (!regstr.test(this.code)) {
+        uni.showToast({ title: "验证码不正确", icon: "none" });
+        return false;
+      }
+      uni.showLoading({
+        title: "提交中..."
+      });
+      this.$emit("checkPhoneNumber", {
+        phoneNumber: this.phoneNumber,
+        code: this.code
+      });
+    },
+    toIndex() {
+      console.log("toindex");
+      uni.hideKeyboard();
+      uni.redirectTo({ url: this.url });
+      uni.navigateBack();
+    },
+    nextSwiper(index) {
+      this.swiperCurrent = index;
+    },
+    getUserInfoData(e) {
+      //console.log(e);
+      this.userInfo = e.detail.userInfo;
+    }
+  },
+  mounted() {
+    // 获取用户信息
+    if (!this.userInfo || !this.userInfo.nickName) {
+      //#ifdef MP
+      uni.showLoading({
+        title: "加载中..."
+      });
+      //#endif
+      uni.getUserInfo({
+        provider: "weixin",
+        success: infoRes => {
+          this.userInfo = infoRes.userInfo;
+        },
+        fail: function(res) {},
+        complete() {
+          uni.hideLoading();
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">
-	@import 'login.scss';
+@import "login.scss";
 </style>

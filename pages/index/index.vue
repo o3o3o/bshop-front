@@ -18,7 +18,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { verifyCode, requestVerificationCode } from "@/api/gql";
+import { verifyCode, requestVerificationCode } from "@/api/auth";
 
 export default {
   data() {
