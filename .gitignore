@@ -21,3 +21,5 @@ doc/gitbook/SUMMARY.md
 coverage/*
 
 dist
+
+*.sw[a-z]

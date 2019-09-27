@@ -51,9 +51,6 @@
               placeholder-style="color: rgba(255,255,255,0.8);"
             />
           </view>
-          <!-- <view class="password">
-						<input placeholder="请输入密码" v-model="passwd" password=true placeholder-style="color: rgba(255,255,255,0.8);"/>
-					</view> -->
           <button class="btn" @tap="doReg" v-if="phoneNumberChecked !== 1">
             立即绑定
           </button>
@@ -64,9 +61,6 @@
           >
             下一步
           </button>
-          <!-- <view class="res">
-						<view @tap="toLogin">已有账号立即登录</view>
-					</view> -->
         </view>
       </swiper-item>
       <swiper-item class="myCenter">
@@ -271,7 +265,7 @@ export default {
     toIndex() {
       console.log("toindex, ", this.url);
       uni.hideKeyboard();
-      uni.redirectTo({ url: this.url });
+      uni.reLaunch({ url: this.url });
       uni.navigateBack();
     },
     nextSwiper(index) {
