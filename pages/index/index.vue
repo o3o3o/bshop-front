@@ -18,54 +18,43 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { verifyCode, requestVerificationCode } from "@/api/auth";
+import {
+  loginWithProvider,
+  verifyCode,
+  requestVerificationCode
+} from "@/api/auth";
 
 export default {
   data() {
     return {};
   },
   computed: {
-    ...mapState(["loginProvider", "hasLogin"])
+    ...mapState(["loginProvider", "hasLogin", "token", "userInfo"])
   },
   onLoad() {
-    var phone = "+8613812345678";
-
-    //requestVerificationCode(phone);
-    //verifyCode(phone, '123456');
     this.isLogin();
   },
   methods: {
-    ...mapMutations(["updateUserInfo"]),
+    ...mapMutations(["updateUserInfo", "login"]),
 
     isLogin() {
-      //#ifndef MP
-      this.login();
-      //#endif
-      uni.showLoading({
-        title: "登录中..."
-      });
-      var that = this;
-      uni.getUserInfo({
-        provider: that.loginProvider,
-        success: function(res) {
-          console.log("用户昵称为：" + res.userInfo.nickName);
-          //TODO: update user info to server
-          that.updateUserInfo(res);
-        },
-        fail(err) {
+      if (this.hasLogin) {
+        return;
+      }
+      loginWithProvider(this.loginProvider)
+        .then(data => {
+          console.log("loginProvider: ", data);
+          this.login(data.token);
+          this.updateUserInfo(data.userInfo);
+        })
+        .catch(err => {
           console.log(err);
-          that.login();
-        },
-        complete() {
-          uni.hideLoading();
-        }
-      });
+          uni.reLaunch({
+            url: "/pages/login/login"
+          });
+        });
     },
-    login() {
-      uni.reLaunch({
-        url: "/pages/login/login"
-      });
-    },
+
     async scanQR(e) {
       console.log(e);
 

@@ -18,13 +18,14 @@
             <view>{{ NickName }}</view>
           </view>
           <button
-            v-if="!(userInfo && userInfo.nickName)"
+            v-if="!HasAuthUserInfo"
             class="btn"
             open-type="getUserInfo"
             @getuserinfo="getUserInfoData"
           >
             获取个人信息
           </button>
+
           <button v-else="" class="btn" @tap="nextSwiper(1)">下一步</button>
         </view>
       </swiper-item>
@@ -70,7 +71,7 @@
       </swiper-item>
       <swiper-item class="myCenter">
         <view class="form re">
-          <block v-if="!HasAuth">
+          <block v-if="!HasAuthUserInfo">
             <view class="res">
               <view>您还没有授权</view>
             </view>
@@ -94,7 +95,7 @@
               去绑定
             </button>
           </block>
-          <block v-if="phoneNumberChecked === 1 && HasAuth">
+          <block v-if="phoneNumberChecked === 1 && HasAuthUserInfo">
             <view class="logo">
               <view class="img">
                 <image mode="widthFix" :src="Style"></image>
@@ -145,8 +146,9 @@ export default {
   data() {
     return {
       swiperCurrent: 0,
-      phoneNumber: "13812345678",
-      code: "123456",
+      phoneNumber: "",
+      countryCode: "+86",
+      code: "",
       passwd: "",
       getCodeText: "获取验证码",
       getCodeBtnColor: "#ffffff",
@@ -155,8 +157,11 @@ export default {
   },
   onLoad() {},
   computed: {
-    ...mapState(["userInfo", "hasLogin"]),
+    ...mapState(["loginProvider", "userInfo", "hasLogin", "phone"]),
 
+    fullPhoneNumber() {
+      return this.countryCode + this.phoneNumber;
+    },
     Style() {
       var headimg =
         this.userInfo && this.userInfo.avatarUrl
@@ -172,8 +177,8 @@ export default {
           : this.userName;
       return nickName;
     },
-    HasAuth() {
-      return this.userInfo && this.hasLogin;
+    HasAuthUserInfo() {
+      return this.userInfo && this.userInfo.nickName;
     }
   },
   watch: {
@@ -197,6 +202,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["updateUserInfo"]),
     swiperChange(e) {
       console.log(e);
       this.swiperCurrent = e.detail.current;
@@ -215,7 +221,7 @@ export default {
       this.getCodeisWaiting = true;
       this.getCodeBtnColor = "rgba(255,255,255,0.5)";
       this.$emit("sendPin", {
-        phoneNumber: this.phoneNumber
+        phoneNumber: this.fullPhoneNumber
       });
     },
     setTimer() {
@@ -258,12 +264,12 @@ export default {
         title: "提交中..."
       });
       this.$emit("checkPhoneNumber", {
-        phoneNumber: this.phoneNumber,
+        phoneNumber: this.fullPhoneNumber,
         code: this.code
       });
     },
     toIndex() {
-      console.log("toindex");
+      console.log("toindex, ", this.url);
       uni.hideKeyboard();
       uni.redirectTo({ url: this.url });
       uni.navigateBack();
@@ -272,11 +278,19 @@ export default {
       this.swiperCurrent = index;
     },
     getUserInfoData(e) {
-      //console.log(e);
-      this.userInfo = e.detail.userInfo;
+      console.log(e);
+      this.updateUserInfo(e.detail.userInfo);
+    },
+    getUserPhoneNumber(e) {
+      console.log(e);
     }
   },
   mounted() {
+    if (process.env.NODE_ENV === "development") {
+      this.phoneNumber = "13812345678";
+      this.code = "123456";
+    }
+
     // 获取用户信息
     if (!this.userInfo || !this.userInfo.nickName) {
       //#ifdef MP
@@ -285,9 +299,9 @@ export default {
       });
       //#endif
       uni.getUserInfo({
-        provider: "weixin",
+        //provider: this.loginProvider,
         success: infoRes => {
-          this.userInfo = infoRes.userInfo;
+          this.updateUserInfo(infoRes);
         },
         fail: function(res) {},
         complete() {

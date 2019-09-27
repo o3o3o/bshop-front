@@ -2,16 +2,22 @@ function showToast(msg) {
 	uni.showToast({
 		title: msg,
 		icon: "none",
-		duration: 2500,
-		position: "bottom"
+		duration: 2500
 	});
 }
 
 var errMap = {
-	wrong_verification_code: "验证码不正确"
+	wrong_verification_code: "验证码不正确",
+	need_verify_phone: "需要短信认证",
+	invalid_phone: "手机号码格式不合法",
+	too_much_retry: "尝试次数过多"
 };
 
 function showTip(err) {
+	console.log(err);
+	if (typeof err !== "String") {
+		return;
+	}
 	if (err in errMap) {
 		showToast(errMap[err]);
 	} else {

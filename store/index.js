@@ -1,88 +1,85 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
+import updateJwtToken from "@/api/gql";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
-		loginProvider: "",
-		openid: null,
-		userInfo: null
+		//TODO: provicder just for APP
+		loginProvider: "weixin",
+		token: null,
+		userInfo: null,
+		phone: null,
+		authCode: null
 	},
 	getters: {
 		getUserInfo(state) {
-			return uni.getStorage({key: 'userInfo'});
+			return state.userInfo || uni.getStorage({ key: "userInfo" });
+		},
+		getToken(state) {
+			return state.token || uni.getStorage({ key: "token" });
 		}
 	},
 	mutations: {
- 		updateUserInfo(state, infoRes) {
- 			console.log("updateUserInfo for", state.loginProvider);
+		cleanAuthCode(state) {
+			state.authCode = null;
+		},
+		updateAuthCode(state, code) {
+			state.authCode = code;
+		},
+		updateToken(state, token) {
+			state.token = token;
+			uni.setStorage({ key: "token", data: token });
+			console.log(updateJwtToken);
+			updateJwtToken(token);
+		},
+		updateUserInfo(state, res) {
+			console.log("updateUserInfo for", state.loginProvider);
 			let userInfo = {
-				'avatarUrl': infoRes.userInfo.avatarUrl,
-				'nickName': infoRes.userInfo.nickName,
-				'gender': infoRes.userInfo.gender,
-				'country': infoRes.userInfo.country
+				avatarUrl: res.avatarUrl,
+				nickName: res.nickName,
+				gender: res.gender,
+				country: res.country
 			};
 			uni.setStorage({
-				key: 'userInfo',
-				data: userInfo,
+				key: "userInfo",
+				data: userInfo
 			});
 			state.userInfo = userInfo;
 
-			console.log('Updated userinfo：' + state.userInfo);
- 
- 		},
-		logout(state) {
-			state.hasLogin = false
-			state.openid = null
+			console.log("Updated userinfo：" + state.userInfo);
 		},
-		setOpenid(state, openid) {
-			state.openid = openid
+		login(state, token) {
+			state.hasLogin = true;
+			this.commit("updateToken", token);
+		},
+		logout(state) {
+			state.hasLogin = false;
+			state.token = null;
 		}
 	},
 	actions: {
-
-		// lazy loading openid
-		getUserOpenId: async function({
-			commit,
-			state
-		}) {
+		async getAuthCode({ commit, state }) {
 			return await new Promise((resolve, reject) => {
-				if (state.openid) {
-					resolve(state.openid)
-				} else {
-					uni.login({
-						success: (data) => {
-							// res 对象格式
-							//     
-							//     "code":"***",
-							//     "authResult":
-							//         "openid":"***",
-							//         "scope":"snsapi_userinfo",
-							//         "refresh_token":"**",
-							//         "code":"****",
-							//         "unionid":"***",
-							//         "access_token":"***",
-							//         "expires_in":7200
-							//     ,
-							//     "errMsg":"login:ok"
-							// 
-							//"errMsg":"login:ok"
-							console.log('ulogin resutl, ', data, data.authResult);
-							let openid = data.authResult.openid;
-							commit('setOpenid', openid);
-							resolve(openid);
-						},
-						fail: (err) => {
-							console.log('uni.login 接口调用失败，将无法正常使用开放接口等服务', err)
-							reject(err)
-						}
-					})
-				}
-			})
+				uni.login({
+					success: data => {
+						console.log("getAuthCode: ", data);
+						commit("updateAuthCode", data.code);
+						return resolve(data.code);
+					},
+					fail: err => {
+						console.error(
+							"uni.login 接口调用失败，将无法正常使用开放接口等服务",
+							err
+						);
+						reject(err);
+					}
+				});
+			});
 		}
 	}
-})
+});
 
-export default store
+export default store;
