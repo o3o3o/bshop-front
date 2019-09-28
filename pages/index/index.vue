@@ -71,8 +71,9 @@ export default {
     },
 
     deposit(e) {
+      uni.navigateTo({ url: "/pages/wallet/deposit" });
       uni.requestPayment({
-        provider: "",
+        //provider: "",
         orderInfo: "",
         success: res => {},
         fail: () => {},
