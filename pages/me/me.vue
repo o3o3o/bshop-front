@@ -54,7 +54,7 @@
       <view class="order-section">
         <view
           class="order-item"
-          @click="navTo('/pages/wallet/witdraw')"
+          @click="navTo('/pages/wallet/withdraw')"
           hover-class="common-hover"
           :hover-stay-time="50"
         >
@@ -63,7 +63,7 @@
         </view>
         <view
           class="order-item"
-          @click="navTo('/pages/walet/history')"
+          @click="navTo('/pages/wallet/history')"
           hover-class="common-hover"
           :hover-stay-time="50"
         >
@@ -85,7 +85,7 @@
 </template>
 <script>
 import listCell from "@/components/mix-list-cell";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 let startY = 0,
   moveY = 0,
   pageAtTop = true;
@@ -108,18 +108,7 @@ export default {
     ...mapState(["hasLogin", "userInfo"])
   },
   methods: {
-    /**
-     * 统一跳转接口,拦截未登录路由
-     * navigator标签现在默认没有转场动画，所以用view
-     */
-    navTo(url) {
-      if (!this.hasLogin) {
-        url = "/pages/login/login";
-      }
-      uni.navigateTo({
-        url
-      });
-    }
+    ...mapMutations(["navTo"])
   }
 };
 </script>

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import updateJwtToken from "@/api/gql";
+import { loginWithProvider } from "@/api/auth";
 
 Vue.use(Vuex);
 
@@ -58,6 +59,20 @@ const store = new Vuex.Store({
 		logout(state) {
 			state.hasLogin = false;
 			state.token = null;
+		},
+		/**
+		 * 统一跳转接口,拦截未登录路由
+		 * navigator标签现在默认没有转场动画，所以用view
+		 */
+		navTo(state, url) {
+			if (!state.hasLogin) {
+				this.dispatch("tryLoginWithProvider").catch(err => {
+					url = "/pages/login/login";
+				});
+			}
+			uni.navigateTo({
+				url
+			});
 		}
 	},
 	actions: {
@@ -77,6 +92,25 @@ const store = new Vuex.Store({
 						reject(err);
 					}
 				});
+			});
+		},
+		tryLoginWithProvider({ commit, state }) {
+			return new Promise((resolve, reject) => {
+				if (state.hasLogin) {
+					return resolve();
+				}
+				loginWithProvider(state.loginProvider)
+					.then(data => {
+						commit("login", data.token);
+						commit("updateUserInfo", data.userInfo);
+						console.log("loginProvider, success: ", data);
+						return resolve();
+					})
+					.catch(err => {
+						//TODO: handle request:fail request connect error
+						console.log(err);
+						return reject(err);
+					});
 			});
 		}
 	}

@@ -26,6 +26,10 @@
       "style": {}
     },
     {
+      "path": "pages/wallet/history",
+      "style": {}
+    },
+    {
       "path": "pages/wallet/deposit",
       "style": {}
     },

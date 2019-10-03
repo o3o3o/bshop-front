@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import {
   loginWithProvider,
   verifyCode,
@@ -28,33 +28,18 @@ export default {
   data() {
     return {};
   },
-  computed: {
-    ...mapState(["loginProvider", "hasLogin", "token", "userInfo"])
-  },
+  computed: {},
   onLoad() {
     this.isLogin();
   },
   methods: {
-    ...mapMutations(["updateUserInfo", "login"]),
+    ...mapActions(["tryLoginWithProvider"]),
 
     isLogin() {
-      if (this.hasLogin) {
-        return;
-      }
-      loginWithProvider(this.loginProvider)
-        .then(data => {
-          console.log("loginProvider: ", data);
-          this.login(data.token);
-          this.updateUserInfo(data.userInfo);
-        })
-        .catch(err => {
-          console.log(err);
-          uni.reLaunch({
-            url: "/pages/login/login"
-          });
-        });
+      this.$store.dispatch("tryLoginWithProvider").catch(err => {
+        uni.reLaunch({ url: "/pages/login/login" });
+      });
     },
-
     async scanQR(e) {
       console.log(e);
 
