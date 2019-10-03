@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === "development") {
 	serverUrl = "http://localhost:8000/api/gql";
 } else {
 	console.log("生产环境");
-	serverUrl = "https://o3o3o.com/api/gql";
+	serverUrl = "https://dev-shop.o3o3o.com/api/gql";
 }
 
 export var gqlc = new client({
