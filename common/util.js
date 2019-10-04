@@ -1,8 +1,8 @@
-function showToast(msg) {
+function showToast(msg, duration = 2500) {
 	uni.showToast({
 		title: msg,
 		icon: "none",
-		duration: 2500
+		duration: duration
 	});
 }
 
@@ -10,18 +10,19 @@ var errMap = {
 	wrong_verification_code: "验证码不正确",
 	need_verify_phone: "需要短信认证",
 	invalid_phone: "手机号码格式不合法",
-	too_much_retry: "尝试次数过多"
+	too_much_retry: "尝试次数过多",
+	not_vendor: "未入住商户, 不能收款"
 };
 
-function showTip(err) {
+function showTip(err, duration = 2500) {
 	console.log(err);
-	if (typeof err !== "String") {
+	if (typeof err !== "string") {
 		return;
 	}
 	if (err in errMap) {
-		showToast(errMap[err]);
+		showToast(errMap[err], duration);
 	} else {
-		showToast(err);
+		showToast(err, duration);
 	}
 }
 

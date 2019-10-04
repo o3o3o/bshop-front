@@ -16,13 +16,13 @@ export var gqlc = new client({
 	//TODO: add headers? or use lokka-transport-jwt-auth?
 	headers: {}
 });
-console.log(gqlc);
+//console.log(gqlc);
 
 export default function updateJwtToken(token) {
 	//TODO: update and refresh jwt token
 	//https://github.com/kadirahq/lokka-transport-jwt-auth/blob/master/src/index.js
 	gqlc.$client._transport._$headers.Authorization = "JWT " + token;
-	console.log("update to new token: ", gqlc.$client._transport._$headers);
+	// console.log("update to new token: ", gqlc.$client._transport._$headers);
 }
 
 export function execute(query, variables, name) {

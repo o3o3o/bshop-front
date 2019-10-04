@@ -16,12 +16,14 @@
 <script>
 // https://github.com/q310550690/uni-app-qrcode
 import tkiQrcode from "@/components/tki-qrcode/tki-qrcode.vue";
+import { getReceivePayQr } from "@/api/user";
+var util = require("@/common/util.js");
 
 export default {
   components: { tkiQrcode },
   data() {
     return {
-      val: "hello",
+      val: "",
       loadMake: true,
       onval: true,
       background: "#000000",
@@ -38,7 +40,18 @@ export default {
   },
   onLoad() {
     // request for receivepay qr content
-    console.log("onload qr page");
+    //console.log("onload qr page");
+    getReceivePayQr()
+      .then(res => {
+        this.val = res.qr;
+      })
+      .catch(err => {
+        if (err.message) {
+          util.showTip(err.message);
+        } else {
+          util.showTip(err);
+        }
+      });
   }
 };
 </script>

@@ -108,7 +108,7 @@ const store = new Vuex.Store({
 					})
 					.catch(err => {
 						//TODO: handle request:fail request connect error
-						console.log(err);
+						console.log("tryLoginWithProvider: ", err);
 						return reject(err);
 					});
 			});
