@@ -7,7 +7,10 @@
     "@kqtec/graphql-uni-app-client": "github:kqtec/graphql-uni-app-client",
     "lokka": "^1.7.0",
     "lokka-transport-http": "^1.6.1",
+    "query-string": "^6.8.3",
     "tki-qrcode": "^0.1.6",
+    "url-parse": "^1.4.7",
+    "uuid": "^3.3.3",
     "weapp-cookie": "^1.4.0"
   },
   "devDependencies": {},

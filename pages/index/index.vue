@@ -23,6 +23,10 @@ import {
   verifyCode,
   requestVerificationCode
 } from "@/api/auth";
+import { handelQr } from "@/api/qr";
+
+var parse = require("url-parse");
+var util = require("@/common/util.js");
 
 export default {
   data() {
@@ -48,6 +52,17 @@ export default {
         success: res => {
           console.log("条码类型：" + res.scanType);
           console.log("条码内容：" + res.result);
+
+          let parsed = parse(res.result);
+
+          if (res.scanType === "QR_CODE" && parsed.provider === "bshop") {
+            let query = handelQr(res.result);
+            console.log("qr query: ", query);
+            uni.navigateTo({ url: "/pages/wallet/transfer/transfer?" + query });
+          } else {
+            //TODO: show webview?
+            util.showTip(res.result);
+          }
         },
         fail: err => {
           console.log(err);
@@ -56,7 +71,7 @@ export default {
     },
 
     deposit(e) {
-      uni.navigateTo({ url: "/pages/wallet/deposit" });
+      uni.navigateTo({ url: "/pages/wallet/deposit/deposit" });
       uni.requestPayment({
         //provider: "",
         orderInfo: "",

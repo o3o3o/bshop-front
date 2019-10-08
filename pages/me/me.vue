@@ -16,7 +16,7 @@
 
       <view class="vip-card-box">
         <image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
-        <view class="b-btn" @click="navTo('/pages/wallet/deposit')"
+        <view class="b-btn" @click="navTo('/pages/wallet/deposit/deposit')"
           >立即充值</view
         >
         <view class="tit">
@@ -54,7 +54,7 @@
       <view class="order-section">
         <view
           class="order-item"
-          @click="navTo('/pages/wallet/withdraw')"
+          @click="navTo('/pages/wallet/withdraw/withdraw')"
           hover-class="common-hover"
           :hover-stay-time="50"
         >
@@ -63,7 +63,7 @@
         </view>
         <view
           class="order-item"
-          @click="navTo('/pages/wallet/history')"
+          @click="navTo('/pages/wallet/history/history')"
           hover-class="common-hover"
           :hover-stay-time="50"
         >
@@ -72,7 +72,7 @@
         </view>
         <view
           class="order-item"
-          @click="navTo('/pages/wallet/receivePay')"
+          @click="navTo('/pages/wallet/receivePay/receivePay')"
           hover-class="common-hover"
           :hover-stay-time="50"
         >

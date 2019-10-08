@@ -48,6 +48,7 @@ export default {
     };
   },
   onLoad: function() {
+    console.log("deposit page");
     // #ifdef APP-PLUS
     uni.getProvider({
       service: "payment",

@@ -86,3 +86,8 @@ export function testGql() {
 	`;
 	return execute(query);
 }
+
+//TODO: auto parse name https://github.com/egoist/parse-graphql
+function parseName(query) {
+	query.split("{");
+}

@@ -33,7 +33,6 @@ const store = new Vuex.Store({
 		updateToken(state, token) {
 			state.token = token;
 			uni.setStorage({ key: "token", data: token });
-			console.log(updateJwtToken);
 			updateJwtToken(token);
 		},
 		updateUserInfo(state, res) {
