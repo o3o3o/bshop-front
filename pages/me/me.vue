@@ -42,7 +42,7 @@
       <view class="tj-sction">
         <view class="tj-item">
           <text class="num">128.8</text>
-          <text>余额</text>
+          <text class="icon-balance">余额</text>
         </view>
         <view class="tj-item">
           <text class="num">20.2</text>
@@ -50,7 +50,7 @@
         </view>
       </view>
       <view></view>
-      <!-- 订单 -->
+
       <view class="order-section">
         <view
           class="order-item"
@@ -58,7 +58,7 @@
           hover-class="common-hover"
           :hover-stay-time="50"
         >
-          <text class="yticon icon-shouye"></text>
+          <text class="yticon icon-withdraw"></text>
           <text>提现</text>
         </view>
         <view
@@ -67,7 +67,7 @@
           hover-class="common-hover"
           :hover-stay-time="50"
         >
-          <text class="yticon icon-daifukuan"></text>
+          <text class="yticon icon-bill"></text>
           <text>消费记录</text>
         </view>
         <view
@@ -76,9 +76,18 @@
           hover-class="common-hover"
           :hover-stay-time="50"
         >
-          <text class="yticon icon-shouye"></text>
+          <text class="yticon icon-receivePay"></text>
           <text>收款二维码</text>
         </view>
+      </view>
+      <view class="list-section">
+        <list-cell
+          icon="icon-settings"
+          iconColor="#e07472"
+          title="设置"
+          border=""
+          @eventClick="navTo('/pages/set/set')"
+        ></list-cell>
       </view>
     </view>
   </view>
@@ -248,13 +257,15 @@ export default {
     font-size: $font-sm;
     color: $font-color-dark;
   }
-  .yticon {
-    font-size: 48upx;
-    margin-bottom: 18upx;
-    color: #fa436a;
-  }
-  .icon-shouhoutuikuan {
-    font-size: 44upx;
-  }
+}
+.yticon {
+  font-size: 48upx;
+  margin-bottom: 18upx;
+}
+.list-section {
+  padding: 30upx 0 0;
+  margin-top: 20upx;
+  background: #fff;
+  border-radius: 10upx;
 }
 </style>

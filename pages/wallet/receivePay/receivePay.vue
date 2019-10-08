@@ -1,16 +1,21 @@
 <template>
-  <view class="qrimg"
-    ><tki-qrcode
-      ref="qrcode"
-      :val="val"
-      :size="size"
-      :background="background"
-      :foreground="foreground"
-      :pdground="pdground"
-      :onval="onval"
-      :loadMake="loadMake"
-      @result="qrcodeR"
-  /></view>
+  <view>
+    <view class="container">
+      <view class="qrimg"
+        ><tki-qrcode
+          ref="qrcode"
+          :val="val"
+          :size="size"
+          :background="background"
+          :foreground="foreground"
+          :pdground="pdground"
+          :onval="onval"
+          :loadMake="loadMake"
+          @result="qrcodeR"
+        />
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -56,4 +61,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.qrimg {
+  display: flex;
+  justify-content: center;
+  padding: 100upx;
+}
+</style>

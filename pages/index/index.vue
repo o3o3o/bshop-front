@@ -1,16 +1,43 @@
 <template>
-  <view>
-    <view class="uni-padding-wrap">
-      <view class="uni-flex uni-column">
-        <view class="uni-flex-item flex-item-V uni-bg-red" @tap="scanQR"
-          ><text class="text">扫码付款</text></view
-        >
-        <view class="uni-flex-item flex-item-V uni-bg-green" @tap="deposit"
-          ><text class="text">充值</text></view
-        >
-        <view class="uni-flex-item flex-item-V uni-bg-blue" @tap="withdraw"
-          ><text class="text">提现</text></view
-        >
+  <view class="container">
+    <view class="tool-section">
+      <view
+        class="tool-item"
+        hover-class="common-hover"
+        :hover-stay-time="50"
+        @tap="scanQR"
+      >
+        <text class="yticon icon-scanqr"></text>
+        <text>扫码付款</text>
+      </view>
+
+      <view
+        class="tool-item"
+        hover-class="common-hover"
+        :hover-stay-time="50"
+        @tap="mockScanQR"
+      >
+        <text class="yticon icon-scanqr"></text>
+        <text>mock扫码</text>
+      </view>
+
+      <view
+        class="tool-item"
+        hover-class="common-hover"
+        :hover-stay-time="50"
+        @tap="deposit"
+      >
+        <text class="yticon icon-deposit"></text>
+        <text>充值</text>
+      </view>
+      <view
+        class="tool-item"
+        hover-class="common-hover"
+        :hover-stay-time="50"
+        @tap="withdraw"
+      >
+        <text class="yticon icon-withdraw"></text>
+        <text>提现</text>
       </view>
     </view>
   </view>
@@ -44,6 +71,22 @@ export default {
         uni.reLaunch({ url: "/pages/login/login" });
       });
     },
+    mockScanQR() {
+      let res =
+        "bshop://pay/?vendorId=14320f4b-4bb2-4ff5-8e34-2842a4624290&vendorName=Michael%27s+%E5%B0%8F%E5%BA%97";
+      let parsed = parse(res);
+      console.log(parsed);
+      if (parsed.protocol === "bshop:") {
+        let query = handelQr(res);
+        console.log("qr query: ", query);
+        let url = "/pages/wallet/transfer/transfer" + query;
+        console.log("url:", url);
+        uni.navigateTo({ url: url });
+      } else {
+        //TODO: show webview?
+        util.showTip(res);
+      }
+    },
     async scanQR(e) {
       console.log(e);
 
@@ -55,10 +98,12 @@ export default {
 
           let parsed = parse(res.result);
 
-          if (res.scanType === "QR_CODE" && parsed.provider === "bshop") {
+          if (res.scanType === "QR_CODE" && parsed.provider === "bshop:") {
             let query = handelQr(res.result);
             console.log("qr query: ", query);
-            uni.navigateTo({ url: "/pages/wallet/transfer/transfer?" + query });
+            let url = "/pages/wallet/transfer/transfer" + query;
+            console.log("url:", url);
+            uni.navigateTo({ url: url });
           } else {
             //TODO: show webview?
             util.showTip(res.result);
@@ -66,6 +111,7 @@ export default {
         },
         fail: err => {
           console.log(err);
+          util.showTip("识别二维码失败");
         }
       });
     },
@@ -84,18 +130,37 @@ export default {
 };
 </script>
 
-<style>
-.flex-item-V {
-  width: 100%;
-  height: 350rpx;
-  line-height: 350rpx;
+<style lang="scss">
+%flex-center {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  align-content: space-around;
+}
+%section {
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  background: #fff;
+  border-radius: 10upx;
 }
 
-.text {
-  font-size: 50rpx;
+.tool-section {
+  @extend %section;
+  padding: 50upx 0;
+  margin-top: 20upx;
+  .tool-item {
+    @extend %flex-center;
+    width: 150upx;
+    height: 180upx;
+    border-radius: 10upx;
+    font-size: $font-sm;
+    color: $font-color-dark;
+    background-color: #ffffff;
+  }
+}
+.yticon {
+  font-size: 48upx;
+  margin-bottom: 18upx;
 }
 </style>

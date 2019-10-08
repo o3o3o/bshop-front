@@ -2,7 +2,7 @@
   <view>
     <page-head :title="title"></page-head>
     <view v-if="vendorName && vendorId">
-      <text :value="vendorName" />
+      {{ decodeURI(vendorName) }}
     </view>
     <view class="uni-padding-wrap">
       <view style="background:#FFF; padding:50upx 0;">
@@ -58,6 +58,7 @@ export default {
       amount: "",
       vendorId: "",
       vendorName: "",
+      vendorImg: "",
       loading: false,
       disabled: true,
       note: "",

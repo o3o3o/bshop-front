@@ -3,13 +3,16 @@
 var parse = require("url-parse");
 var queryString = require("query-string");
 
-function preTransfer(query) {
+function preTransfer(s) {
+	return s;
+	/*
+	let query = queryString.parse(s);
+	console.log("preTransfer: query, ", query);
 	return {
-		to: query.vendorId,
-		toName: query.vendorName,
-		note: "",
-		amount: ""
+		vendorId: query.vendorId,
+		vendorName: query.vendorName
 	};
+	*/
 }
 
 var qrRouter = {
@@ -18,10 +21,9 @@ var qrRouter = {
 
 export function handelQr(s) {
 	let parsed = parse(s);
-	if (parsed.protocol !== "bshop") {
+	if (parsed.protocol !== "bshop:") {
 		return;
 	}
-	//let query = queryString.parse(parsed.query);
 	return qrAction(parsed.hostname, parsed.query);
 }
 
