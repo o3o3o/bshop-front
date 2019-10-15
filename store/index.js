@@ -12,8 +12,7 @@ const store = new Vuex.Store({
 		loginProvider: "weixin",
 		token: null,
 		userInfo: null,
-		phone: null,
-		authCode: null
+		phone: null
 	},
 	getters: {
 		getUserInfo(state) {
@@ -24,12 +23,6 @@ const store = new Vuex.Store({
 		}
 	},
 	mutations: {
-		cleanAuthCode(state) {
-			state.authCode = null;
-		},
-		updateAuthCode(state, code) {
-			state.authCode = code;
-		},
 		updateToken(state, token) {
 			state.token = token;
 			uni.setStorage({ key: "token", data: token });
@@ -80,7 +73,6 @@ const store = new Vuex.Store({
 				uni.login({
 					success: data => {
 						console.log("getAuthCode: ", data);
-						commit("updateAuthCode", data.code);
 						return resolve(data.code);
 					},
 					fail: err => {
@@ -94,23 +86,22 @@ const store = new Vuex.Store({
 			});
 		},
 		tryLoginWithProvider({ commit, state }) {
-			return new Promise((resolve, reject) => {
-				if (state.hasLogin) {
-					return resolve();
-				}
-				loginWithProvider(state.loginProvider)
-					.then(data => {
-						commit("login", data.token);
-						commit("updateUserInfo", data.userInfo);
-						console.log("loginProvider, success: ", data);
-						return resolve();
-					})
-					.catch(err => {
-						//TODO: handle request:fail request connect error
-						console.log("tryLoginWithProvider: ", err);
-						return reject(err);
-					});
-			});
+			if (state.hasLogin) {
+				return "already login";
+			}
+			return loginWithProvider(state.loginProvider)
+				.then(data => {
+					console.log(data);
+					commit("login", data.token);
+					commit("updateUserInfo", data.userInfo);
+					console.log("loginProvider, success: ", data);
+					return "success";
+				})
+				.catch(err => {
+					//TODO: handle request:fail request connect error
+					console.log("tryLoginWithProvider: ", err);
+					return Promise.reject(err);
+				});
 		}
 	}
 });

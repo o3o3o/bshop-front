@@ -16,7 +16,7 @@ import {
   signUp,
   verifyCodeApi,
   requestVerificationCode,
-  bindThirdAccount,
+  bindAccount,
   updateUserInfoApi
 } from "@/api/auth";
 var util = require("@/common/util.js");
@@ -32,7 +32,7 @@ export default {
     wsAuth
   },
   computed: {
-    ...mapState(["userInfo", "hasLogin", "authCode", "loginProvider"])
+    ...mapState(["userInfo", "hasLogin"])
   },
   onLoad() {},
   methods: {
@@ -54,37 +54,29 @@ export default {
 
     verifyCode(e) {
       console.log(e.phoneNumber + " _ " + e.code);
+      var that = this;
       verifyCodeApi(e.phoneNumber, e.code)
         .then(() => {
-          // isChecked: 0:未验证 1:验证成功 2:验证失败
+          signUp(e.phoneNumber).then(res => {
+            console.log("signUp with phone: ", res);
+            that.login(res.token);
 
-          signUp(e.phoneNumber)
-            .then(res => {
-              console.log("signUp with phone: ", res);
-              this.login(res.token);
+            if (!res.me.avatarUrl || !res.me.nickName) {
+              updateUserInfoApi(
+                that.userInfo.nickName,
+                that.userInfo.avatarUrl
+              );
+            }
+          });
+        })
+        .then(() => {
+          return bindAccount().then(res => {
+            console.log("bindAccount: ", res);
+            // isChecked: 0:未验证 1:验证成功 2:验证失败
 
-              if (!res.me.avatarUrl || !res.me.nickName) {
-                updateUserInfoApi(
-                  this.userInfo.nickName,
-                  this.userInfo.avatarUrl
-                );
-              }
-
-              //TODO: sync useinfo from server
-              bindThirdAccount(this.authCode, this.loginProvider)
-                .then(() => {
-                  this.isChecked = 1;
-                })
-                .catch(err => {
-                  if (err.message === "code_been_used") {
-                    this.cleanAuthCode();
-                  }
-                  util.showTip(err.message);
-                });
-            })
-            .catch(err => {
-              util.showTip(err);
-            });
+            that.isChecked = 1;
+            //TODO: go to next page?
+          });
         })
         .catch(err => {
           util.showTip(err);

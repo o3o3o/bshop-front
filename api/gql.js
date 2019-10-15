@@ -26,41 +26,32 @@ export default function updateJwtToken(token) {
 }
 
 export function execute(query, variables, name) {
-	return new Promise((resolve, reject) => {
-		gqlc
-			.query(query, variables)
-			.then(res => {
-				console.log("execute " + name + " result: ", res);
-				if (res.data && res.statusCode === 200) {
-					if (res.data.errors) {
-						return reject(res.data.errors[0]);
-					}
-					resolve(res.data.data[name]);
-				} else if (res.statusCode === 400) {
-					let err = res.data.errors;
-					console.error(err);
-					reject(err);
-				} else {
-					console.error(res);
-					reject(res);
-				}
-			})
-			.catch(err => reject(err));
+	return gqlc.query(query, variables).then(res => {
+		console.log("execute " + name + " result: ", res);
+		if (res.data && res.statusCode === 200) {
+			if (res.data.errors) {
+				return Promise.reject(res.data.errors[0]);
+			}
+			return res.data.data[name];
+		} else if (res.statusCode === 400) {
+			let err = res.data.errors;
+			console.error(err);
+			Promise.reject(err);
+		} else {
+			console.error(res);
+			Promise.reject(res);
+		}
 	});
 }
 
 export function mutate_without_result(query, variables, name) {
-	return new Promise((resolve, reject) => {
-		execute(query, variables, name)
-			.then(res => {
-				console.log("mutate " + name + "without result: ", res);
-				if (res.success) {
-					resolve(name + ":ok");
-				} else {
-					reject(res.message);
-				}
-			})
-			.catch(err => reject(err));
+	return execute(query, variables, name).then(res => {
+		console.log("mutate " + name + " without result: ", res);
+		if (res.success) {
+			return name + ":ok";
+		} else {
+			Promise.reject(res.message);
+		}
 	});
 }
 

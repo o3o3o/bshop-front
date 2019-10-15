@@ -24,12 +24,32 @@
       <view class="uni-btn-v uni-common-mt">
         <button
           type="primary"
-          @click="togglePayment"
+          @click="requestPayment"
           :loading="loading"
           :disabled="disabled"
         >
-          开始转账
+          {{ payMethod }} 支付
         </button>
+      </view>
+      <view class="uni-list">
+        <radio-group @change="payMethodChange">
+          <label
+            class="uni-list-cell uni-list-cell-pd"
+            v-for="(item, index) in payMethods"
+            :key="item.value"
+          >
+            <view>
+              <radio
+                :value="item.value"
+                :checked="index === payMethodCurrent"
+              />
+            </view>
+            <view>{{ item.name }}</view>
+          </label>
+        </radio-group>
+      </view>
+
+      <view v-if="payMethodCurrent === 0">
         <best-payment-password
           :show="showInputPwd"
           :forget="false"
@@ -44,7 +64,7 @@
 </template>
 
 <script>
-import { transferPay } from "@/api/wallet";
+import { transferPay, requestPay as requestPayApi } from "@/api/wallet";
 import bestPaymentPassword from "@/components/best-payment-password/best-payment-password.vue";
 
 var util = require("@/common/util.js");
@@ -55,6 +75,7 @@ export default {
   data() {
     return {
       title: "转账",
+      payMethod: "余额",
       amount: "",
       vendorId: "",
       vendorName: "",
@@ -63,7 +84,22 @@ export default {
       disabled: true,
       note: "",
       paymentPassword: "",
-      showInputPwd: false
+      showInputPwd: false,
+      payMethodCurrent: 0,
+      payMethods: [
+        {
+          name: "balance",
+          value: "余额"
+        },
+        {
+          name: "weixin",
+          value: "微信"
+        },
+        {
+          name: "alipay",
+          value: "支付宝"
+        }
+      ]
     };
   },
   onLoad(option) {
@@ -75,6 +111,16 @@ export default {
     this.vendorName = option.vendorName;
   },
   methods: {
+    payMethodChange(evt) {
+      for (let i = 0; i < this.payMethods.length; i++) {
+        if (this.payMethods[i].value === evt.target.value) {
+          this.payMethodCurrent = i;
+          this.payMethod = this.payMethods[i].name;
+
+          break;
+        }
+      }
+    },
     amountChange(e) {
       console.log(e.detail.value);
       this.amount = e.detail.value;
@@ -87,11 +133,22 @@ export default {
     togglePayment() {
       this.showInputPwd = !this.showInputPwd;
     },
+    requestPayment() {
+      if (this.payMethodCurrent === 0) {
+        togglePayment();
+      } else {
+        //TODO: pay with weixin, alipay....
+        requestPayApi(this.amount, this.vendorId)
+          .then(res => {})
+          .catch();
+      }
+    },
     transfer(paymentPassword) {
-      console.log("开始转账", paymentPassword);
+      console.log("开始转账", this.payMethod, paymentPassword);
       this.paymentPassword = paymentPassword;
       this.showInputPwd = false;
       this.loading = true;
+      //TODO: balance
       transferPay(this.vendorId, this.amount, this.paymentPassword, this.note)
         .then(res => {
           console.log("transfer success");

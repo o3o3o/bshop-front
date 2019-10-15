@@ -68,6 +68,7 @@ export default {
 
     isLogin() {
       this.$store.dispatch("tryLoginWithProvider").catch(err => {
+        console.log("isLogin error: ", err);
         uni.reLaunch({ url: "/pages/login/login" });
       });
     },
@@ -149,6 +150,7 @@ export default {
   @extend %section;
   padding: 50upx 0;
   margin-top: 20upx;
+  background: #f5f5f5;
   .tool-item {
     @extend %flex-center;
     width: 150upx;

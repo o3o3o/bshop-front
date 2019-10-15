@@ -103,7 +103,7 @@ export function verifyToken(token) {
 	return execute(mutation, variables, "verifyToken");
 }
 
-export function bindThirdAccount(authCode, provider) {
+export function bindThirdAccountApi(authCode, provider) {
 	const mutation = `
 	mutation _($authCode: String!, $provider: LoginProvider!) {
 			  bindThirdAccount(authCode: $authCode, provider: $provider) {
@@ -118,26 +118,29 @@ export function bindThirdAccount(authCode, provider) {
 	return mutate_without_result(mutation, variables, "bindThirdAccount");
 }
 
+export function bindAccount() {
+	return store.dispatch("getAuthCode").then(authCode => {
+		return bindThirdAccountApi(authCode, store.state.loginProvider);
+	});
+}
+
 export function loginWithProvider(provider) {
-	return new Promise((resolve, reject) => {
-		store.dispatch("getAuthCode").then(authCode => {
-			signIn(null, authCode, provider)
-				.then(res => {
-					console.log("signIn with authcode: ", res);
-					var data = {
-						token: res.token,
-						userInfo: {
-							id: res.me.id,
-							avatarUrl: res.me.avatar,
-							nickName: res.me.nickname,
-							phone: res.me.phone
-						}
-					};
-					return resolve(data);
-				})
-				.catch(err => {
-					reject(err);
-				});
+	return store.dispatch("getAuthCode").then(authCode => {
+		return signIn(null, authCode, provider).then(res => {
+			console.log("signIn with authcode: ", res);
+			if (res.me) {
+				var data = {
+					token: res.token,
+					userInfo: {
+						id: res.me.id,
+						avatarUrl: res.me.avatar,
+						nickName: res.me.nickname,
+						phone: res.me.phone
+					}
+				};
+				return data;
+			}
+			return Promise.reject("loginProvider failed");
 		});
 	});
 }
