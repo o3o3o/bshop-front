@@ -9,7 +9,7 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		//TODO: provicder just for APP
-		loginProvider: "weixin",
+		loginProvider: "WECHAT",
 		token: null,
 		userInfo: null,
 		phone: null

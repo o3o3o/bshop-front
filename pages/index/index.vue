@@ -74,7 +74,7 @@ export default {
     },
     mockScanQR() {
       let res =
-        "bshop://pay/?vendorId=14320f4b-4bb2-4ff5-8e34-2842a4624290&vendorName=Michael%27s+%E5%B0%8F%E5%BA%97";
+        "bshop://pay/?vendorId=a9aa9239-8be7-4d32-aff9-b855b898a510&vendorName=Michael%27s+%E5%B0%8F%E5%BA%97";
       let parsed = parse(res);
       console.log(parsed);
       if (parsed.protocol === "bshop:") {

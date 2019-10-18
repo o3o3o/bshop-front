@@ -32,6 +32,7 @@
         </button>
       </view>
       <view class="uni-list">
+        <view><text>请选择支付方式</text></view>
         <radio-group @change="payMethodChange">
           <label
             class="uni-list-cell uni-list-cell-pd"
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import { transferPay, requestPay as requestPayApi } from "@/api/wallet";
+import { transferPay, createPayOrder, pay as payApi } from "@/api/wallet";
 import bestPaymentPassword from "@/components/best-payment-password/best-payment-password.vue";
 
 var util = require("@/common/util.js");
@@ -85,20 +86,22 @@ export default {
       note: "",
       paymentPassword: "",
       showInputPwd: false,
+      //TODO: if balance>0, set default paymethod into balance
       payMethodCurrent: 0,
       payMethods: [
         {
-          name: "balance",
-          value: "余额"
+          value: "balance",
+          name: "余额"
         },
         {
-          name: "weixin",
-          value: "微信"
-        },
+          value: "weixin",
+          name: "微信"
+        } /*,
         {
-          name: "alipay",
-          value: "支付宝"
+          value: "alipay",
+          name: "支付宝"
         }
+        */
       ]
     };
   },
@@ -135,12 +138,27 @@ export default {
     },
     requestPayment() {
       if (this.payMethodCurrent === 0) {
+        // pay with balance
         togglePayment();
       } else {
-        //TODO: pay with weixin, alipay....
-        requestPayApi(this.amount, this.vendorId)
-          .then(res => {})
-          .catch();
+        // pay with weixin, alipay....
+        createPayOrder(this.amount, this.vendorId)
+          .then(data => {
+            console.log(data);
+            var payment = JSON.parse(data.payment);
+            return payApi(payment);
+          })
+          .then(res => {
+            console.log("pay success: ", res);
+
+            /*TODO:
+            1. sync the order state from server
+            2. go to pay success page?
+            */
+          })
+          .catch(err => {
+            util.showTip(err);
+          });
       }
     },
     transfer(paymentPassword) {
