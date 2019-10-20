@@ -1,11 +1,12 @@
 // https://github.com/kqtec/graphql-uni-app-client
 import client from "@kqtec/graphql-uni-app-client";
+var { parse } = require("parse-graphql");
 
 var serverUrl;
 
 if (process.env.NODE_ENV === "development") {
 	console.log("开发环境");
-	serverUrl = "http://localhost:8000/api/gql";
+	serverUrl = "http://192.168.1.107:8000/api/gql";
 } else {
 	console.log("生产环境");
 	serverUrl = "https://dev-shop.o3o3o.com/api/gql";
@@ -25,8 +26,17 @@ export default function updateJwtToken(token) {
 	// console.log("update to new token: ", gqlc.$client._transport._$headers);
 }
 
-export function execute(query, variables, name) {
+export function execute(query, variables = null, name = null) {
 	return gqlc.query(query, variables).then(res => {
+		if (name === null) {
+			name = parseQueryName(query);
+		}
+
+		if (name === null) {
+			//TODO: parse name mutiple....
+			throw "Do not support parse name: " + query;
+		}
+
 		console.log("execute " + name + " result: ", res);
 		if (res.data && res.statusCode === 200) {
 			if (res.data.errors) {
@@ -78,7 +88,12 @@ export function testGql() {
 	return execute(query);
 }
 
-//TODO: auto parse name https://github.com/egoist/parse-graphql
-function parseName(query) {
-	query.split("{");
+function parseQueryName(query) {
+	var r = parse(query);
+	var selections = r.definitions[0].selectionSet.selections;
+	if (selections.length === 1) {
+		return selections[0].name.value;
+	} else {
+		return null;
+	}
 }

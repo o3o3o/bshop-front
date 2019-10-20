@@ -14,7 +14,7 @@ export function requestVerificationCode(phone) {
 	let variables = {
 		phone: phone
 	};
-	return mutate_without_result(mutation, variables, "requestVerificationCode");
+	return mutate_without_result(mutation, variables);
 }
 
 export function verifyCodeApi(phone, code) {
@@ -29,7 +29,7 @@ export function verifyCodeApi(phone, code) {
 		phone: phone,
 		code: code
 	};
-	return mutate_without_result(mutation, variables, "verifyCode");
+	return mutate_without_result(mutation, variables);
 }
 
 var providerMap = {
@@ -67,7 +67,7 @@ export function signIn(phone = null, authCode = null, provider = null) {
 		authCode: authCode,
 		provider: provider
 	};
-	return execute(mutation, variables, "signIn");
+	return execute(mutation, variables);
 }
 
 export function signUp(phone) {
@@ -88,7 +88,7 @@ export function signUp(phone) {
 	let variables = {
 		phone: phone
 	};
-	return execute(mutation, variables, "signUp");
+	return execute(mutation, variables);
 }
 export function verifyToken(token) {
 	const mutation = `
@@ -100,7 +100,7 @@ export function verifyToken(token) {
 	let variables = {
 		token: token
 	};
-	return execute(mutation, variables, "verifyToken");
+	return execute(mutation, variables);
 }
 
 export function bindThirdAccountApi(authCode, provider) {
@@ -115,7 +115,7 @@ export function bindThirdAccountApi(authCode, provider) {
 		provider: getLoginProvider(provider),
 		authCode: authCode
 	};
-	return mutate_without_result(mutation, variables, "bindThirdAccount");
+	return mutate_without_result(mutation, variables);
 }
 
 export function bindAccount() {
@@ -164,5 +164,5 @@ export function updateUserInfoApi(nickName = null, avatarUrl = null) {
 	if (avatarUrl) {
 		variables.input.avatarUrl = avatarUrl;
 	}
-	return mutate_without_result(mutation, variables, "updateUserInfo");
+	return mutate_without_result(mutation, variables);
 }

@@ -12,7 +12,7 @@ export function getMe() {
 							phone
 					 }
 	}`;
-	return execute(query, null, "me");
+	return execute(query);
 }
 
 export function getReceivePayQr() {
@@ -22,5 +22,5 @@ export function getReceivePayQr() {
 				     qr
 				   }
 	}`;
-	return execute(query, null, "vendorReceivePayQr");
+	return execute(query);
 }

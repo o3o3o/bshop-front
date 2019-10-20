@@ -1,12 +1,14 @@
 <template>
   <view>
     <page-head :title="title"></page-head>
-    <view v-if="vendorName && vendorId">
-      {{ decodeURI(vendorName) }}
-    </view>
     <view class="uni-padding-wrap">
       <view style="background:#FFF; padding:50upx 0;">
-        <view class="uni-hello-text uni-center"><text>支付金额</text></view>
+        <view class="uni-hello-text uni-center">
+          <text v-if="vendorName && vendorId"
+            >支付给 {{ decodeURI(vendorName) }}
+          </text>
+          <text v-else>支付金额</text>
+        </view>
         <view class="uni-h1 uni-center uni-common-mt">
           <text class="rmbLogo">￥</text>
           <input
@@ -45,7 +47,11 @@
                 :checked="index === payMethodCurrent"
               />
             </view>
-            <view>{{ item.name }}</view>
+            <view v-if="item.value === 'balance'">
+              ({{ balance }} 元) {{ item.name }}
+            </view>
+
+            <view v-else>{{ item.name }}</view>
           </label>
         </radio-group>
       </view>
@@ -65,7 +71,13 @@
 </template>
 
 <script>
-import { transferPay, createPayOrder, pay as payApi } from "@/api/wallet";
+import {
+  transferPay,
+  createPayOrder,
+  pay as payApi,
+  getOrderState
+} from "@/api/wallet";
+import { execute } from "@/api/gql";
 import bestPaymentPassword from "@/components/best-payment-password/best-payment-password.vue";
 
 var util = require("@/common/util.js");
@@ -76,8 +88,8 @@ export default {
   data() {
     return {
       title: "转账",
-      payMethod: "余额",
       amount: "",
+      balance: 0,
       vendorId: "",
       vendorName: "",
       vendorImg: "",
@@ -102,8 +114,14 @@ export default {
           name: "支付宝"
         }
         */
-      ]
+      ],
+      intervalID: null
     };
+  },
+  computed: {
+    payMethod: function() {
+      return this.payMethods[this.payMethodCurrent].name;
+    }
   },
   onLoad(option) {
     if (!option.vendorId || !option.vendorName) {
@@ -112,20 +130,41 @@ export default {
     }
     this.vendorId = option.vendorId;
     this.vendorName = option.vendorName;
+    this.getBalance().then(data => {
+      this.balance = data.cash;
+    });
+    if (this.balance > 0) {
+      this.payMethodCurrent = 0;
+    } else {
+      //TODO: use value as key
+      this.payMethodCurrent = 1;
+    }
+    //this.checkIfPaied("2b8af81a7d834cab841d0818b954abf2");
+  },
+  onUnload() {
+    clearInterval(this.intervalID);
   },
   methods: {
+    getBalance() {
+      const query = `
+      query{
+        fund{
+          cash
+        }
+      }
+      `;
+      return execute(query);
+    },
     payMethodChange(evt) {
       for (let i = 0; i < this.payMethods.length; i++) {
         if (this.payMethods[i].value === evt.target.value) {
           this.payMethodCurrent = i;
-          this.payMethod = this.payMethods[i].name;
-
           break;
         }
       }
     },
     amountChange(e) {
-      console.log(e.detail.value);
+      //console.log(e.detail.value);
       this.amount = e.detail.value;
       if (this.amount > 0 && this.amount < 100000) {
         this.disabled = false;
@@ -142,24 +181,67 @@ export default {
         togglePayment();
       } else {
         // pay with weixin, alipay....
+        var payment;
         createPayOrder(this.amount, this.vendorId)
           .then(data => {
             console.log(data);
-            var payment = JSON.parse(data.payment);
+            payment = JSON.parse(data.payment);
             return payApi(payment);
           })
           .then(res => {
-            console.log("pay success: ", res);
-
-            /*TODO:
-            1. sync the order state from server
-            2. go to pay success page?
-            */
+            console.log("pay finished: ", res, payment);
+            let orderId = payment.orderId;
+            this.checkIfPaied(orderId);
           })
           .catch(err => {
+            console.log("pay err: ", err);
             util.showTip(err);
           });
       }
+    },
+    checkIfPaied(orderId) {
+      var that = this;
+      this.intervalID = setInterval(function() {
+        that
+          .isPaied(orderId)
+          .then(data => {
+            console.log("go to pay succcess page:", data);
+            //TODO: 付款给{vendor_name}
+            // * new page
+            uni.showModal({
+              title: "付款成功",
+              content: "成功付款" + " " + float(data.amount) + "元",
+              showCancel: false,
+              success: function(res) {
+                if (res.confirm) {
+                  //console.log("用户点击确定");
+                  uni.navigateBack();
+                }
+              }
+            });
+          })
+          .catch(err => {
+            console.log("pay failed: ", err);
+          });
+      }, 1000);
+    },
+
+    isPaied(orderId) {
+      var that = this;
+      return getOrderState(orderId).then(data => {
+        console.log("getOrderState: ", data);
+        switch (data.state) {
+          case "SUCCESS":
+            clearInterval(that.intervalID);
+            return Promise.resolve(data);
+          case "NOTPAY":
+          case "USERPAYING":
+            return Promise.reject(data.state);
+          default:
+            clearInterval(that.intervalID);
+            return Promise.reject(data.state);
+        }
+      });
     },
     transfer(paymentPassword) {
       console.log("开始转账", this.payMethod, paymentPassword);

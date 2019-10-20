@@ -19,7 +19,7 @@ export function createPayOrderApi(provider, code, amount, to_uuid = null) {
 			requestId: uuidv4()
 		}
 	};
-	return execute(mutation, variables, "createPayOrder");
+	return execute(mutation, variables);
 }
 
 export function createPayOrder(amount, to_uuid = null) {
@@ -33,6 +33,23 @@ export function createPayOrder(amount, to_uuid = null) {
 	});
 }
 
+export function getOrderState(orderId) {
+	const query = `
+		query _($orderId: String!, $provider: LoginProvider!){
+			orderInfo(orderId: $orderId, provider: $provider){
+				id
+				state
+				amount
+			}
+		}
+	`;
+	let variables = {
+		orderId: orderId,
+		provider: store.state.loginProvider
+	};
+	return execute(query, variables);
+}
+
 export function pay(data) {
 	return new Promise((resolve, reject) => {
 		uni.requestPayment({
@@ -41,11 +58,17 @@ export function pay(data) {
 			package: data.package,
 			signType: "MD5",
 			paySign: data.paySign,
+
 			success: res => {
-				resolve(res);
+				console.log("pay success: ", res);
+				return resolve(res);
 			},
 			fail: res => {
-				reject(res);
+				console.log("fail: ", res);
+				return reject(res);
+			},
+			complete: res => {
+				console.log("complete: ", res);
 			}
 		});
 	});
@@ -67,5 +90,5 @@ export function transferPay(to_uuid, amount, paymentPassword, note = null) {
 			requestId: uuidv4()
 		}
 	};
-	return mutate_without_result(mutation, variables, "transfer");
+	return mutate_without_result(mutation, variables);
 }
