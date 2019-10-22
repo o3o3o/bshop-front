@@ -41,12 +41,12 @@
 
       <view class="tj-sction">
         <view class="tj-item">
-          <text class="num">128.8</text>
-          <text class="icon-balance">余额</text>
+          <text class="num">{{ balance ? balance.total : 0 }} 元</text>
+          <text>余额</text>
         </view>
         <view class="tj-item">
-          <text class="num">20.2</text>
-          <text>已返现</text>
+          <text class="num">{{ balance ? balance.hold : 0 }} 元</text>
+          <text>暂不可提现</text>
         </view>
       </view>
       <view></view>
@@ -112,9 +112,12 @@ export default {
   onLoad() {
     // console.log('Me: ', this.userInfo);
   },
+  onShow() {
+    this.$store.dispatch("syncBalance");
+  },
 
   computed: {
-    ...mapState(["hasLogin", "userInfo"])
+    ...mapState(["balance", "hasLogin", "userInfo"])
   },
   methods: {
     ...mapMutations(["navTo"])

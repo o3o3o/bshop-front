@@ -4,9 +4,7 @@
     <view class="uni-padding-wrap">
       <view style="background:#FFF; padding:50upx 0;">
         <view class="uni-hello-text uni-center">
-          <text v-if="vendorName && vendorId"
-            >支付给 {{ decodeURI(vendorName) }}
-          </text>
+          <text v-if="vendorName && vendorId">{{ payTo }} </text>
           <text v-else>支付金额</text>
         </view>
         <view class="uni-h1 uni-center uni-common-mt">
@@ -28,7 +26,7 @@
           type="primary"
           @click="requestPayment"
           :loading="loading"
-          :disabled="disabled"
+          :disabled="disabled_pay_btn"
         >
           {{ payMethod }} 支付
         </button>
@@ -45,10 +43,11 @@
               <radio
                 :value="item.value"
                 :checked="index === payMethodCurrent"
+                :disabled="zeroBalance && item.value === 'balance'"
               />
             </view>
             <view v-if="item.value === 'balance'">
-              ({{ balance }} 元) {{ item.name }}
+              ({{ balance ? balance.total : 0 }} 元) {{ item.name }}
             </view>
 
             <view v-else>{{ item.name }}</view>
@@ -71,6 +70,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from "vuex";
 import {
   transferPay,
   createPayOrder,
@@ -89,16 +89,14 @@ export default {
     return {
       title: "转账",
       amount: "",
-      balance: 0,
       vendorId: "",
       vendorName: "",
       vendorImg: "",
       loading: false,
-      disabled: true,
+      disabled_pay_btn: true,
       note: "",
       paymentPassword: "",
       showInputPwd: false,
-      //TODO: if balance>0, set default paymethod into balance
       payMethodCurrent: 0,
       payMethods: [
         {
@@ -119,8 +117,22 @@ export default {
     };
   },
   computed: {
+    ...mapState(["balance"]),
     payMethod: function() {
       return this.payMethods[this.payMethodCurrent].name;
+    },
+    payTo: function() {
+      if (this.vendorName && this.vendorName.length > 0) {
+        return "支付给 " + this.vendorName;
+      } else {
+        return "充值";
+      }
+    },
+    zeroBalance() {
+      if (this.balance && this.balance.total) {
+        return this.balance.total <= 0;
+      }
+      return false;
     }
   },
   onLoad(option) {
@@ -129,11 +141,11 @@ export default {
       return;
     }
     this.vendorId = option.vendorId;
-    this.vendorName = option.vendorName;
-    this.getBalance().then(data => {
-      this.balance = data.cash;
-    });
-    if (this.balance > 0) {
+    this.vendorName = decodeURI(option.vendorName);
+
+    this.$store.dispatch("syncBalance");
+
+    if (this.balance && this.balance.total > 0) {
       this.payMethodCurrent = 0;
     } else {
       //TODO: use value as key
@@ -145,16 +157,6 @@ export default {
     clearInterval(this.intervalID);
   },
   methods: {
-    getBalance() {
-      const query = `
-      query{
-        fund{
-          cash
-        }
-      }
-      `;
-      return execute(query);
-    },
     payMethodChange(evt) {
       for (let i = 0; i < this.payMethods.length; i++) {
         if (this.payMethods[i].value === evt.target.value) {
@@ -164,12 +166,11 @@ export default {
       }
     },
     amountChange(e) {
-      //console.log(e.detail.value);
       this.amount = e.detail.value;
       if (this.amount > 0 && this.amount < 100000) {
-        this.disabled = false;
+        this.disabled_pay_btn = false;
       } else {
-        this.disabled = true;
+        this.disabled_pay_btn = true;
       }
     },
     togglePayment() {
@@ -178,7 +179,7 @@ export default {
     requestPayment() {
       if (this.payMethodCurrent === 0) {
         // pay with balance
-        togglePayment();
+        this.togglePayment();
       } else {
         // pay with weixin, alipay....
         var payment;
@@ -191,7 +192,7 @@ export default {
           .then(res => {
             console.log("pay finished: ", res, payment);
             let orderId = payment.orderId;
-            this.checkIfPaied(orderId);
+            return this.checkIfPaied(orderId);
           })
           .catch(err => {
             console.log("pay err: ", err);
@@ -210,7 +211,7 @@ export default {
             // * new page
             uni.showModal({
               title: "付款成功",
-              content: "成功付款" + " " + float(data.amount) + "元",
+              content: this.payTo + " " + data.amount + "元",
               showCancel: false,
               success: function(res) {
                 if (res.confirm) {
@@ -234,6 +235,7 @@ export default {
           case "SUCCESS":
             clearInterval(that.intervalID);
             return Promise.resolve(data);
+          case null:
           case "NOTPAY":
           case "USERPAYING":
             return Promise.reject(data.state);
@@ -254,7 +256,7 @@ export default {
           console.log("transfer success");
           uni.showModal({
             title: "转账成功",
-            content: "付款给" + this.vendorName + " " + this.amount + "元",
+            content: this.payTo + " " + this.amount + "元",
             showCancel: false,
             success: function(res) {
               if (res.confirm) {

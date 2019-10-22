@@ -92,3 +92,16 @@ export function transferPay(to_uuid, amount, paymentPassword, note = null) {
 	};
 	return mutate_without_result(mutation, variables);
 }
+
+export function getBalance() {
+	const query = `
+      query{
+        fund{
+          total
+          cash
+          hold
+        }
+      }
+      `;
+	return execute(query);
+}

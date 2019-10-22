@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import updateJwtToken from "@/api/gql";
 import { loginWithProvider } from "@/api/auth";
+import { getBalance } from "@/api/wallet";
 
 Vue.use(Vuex);
 
@@ -12,7 +13,8 @@ const store = new Vuex.Store({
 		loginProvider: "WECHAT",
 		token: null,
 		userInfo: null,
-		phone: null
+		phone: null,
+		balance: null
 	},
 	getters: {
 		getUserInfo(state) {
@@ -51,6 +53,9 @@ const store = new Vuex.Store({
 		logout(state) {
 			state.hasLogin = false;
 			state.token = null;
+		},
+		updateBalance(state, data) {
+			state.balance = data;
 		},
 		/**
 		 * 统一跳转接口,拦截未登录路由
@@ -102,6 +107,12 @@ const store = new Vuex.Store({
 					console.log("tryLoginWithProvider: ", err);
 					return Promise.reject(err);
 				});
+		},
+		syncBalance({ commit, state }) {
+			return getBalance().then(data => {
+				commit("updateBalance", data);
+				return Promise.resolve(data);
+			});
 		}
 	}
 });
