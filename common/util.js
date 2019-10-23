@@ -17,6 +17,7 @@ var errMap = {
 function showTip(err, duration = 2500) {
 	console.log(err);
 	if (typeof err !== "string") {
+		showToast(JSON.stringify(err));
 		return;
 	}
 	if (err in errMap) {
@@ -106,10 +107,15 @@ var dateUtils = {
 	}
 };
 
+function isNumber(s) {
+	let r = new RegExp("\\d{6}");
+	return r.test(s);
+}
 module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,
 	dateUtils: dateUtils,
 	showToast: showToast,
-	showTip: showTip
+	showTip: showTip,
+	isNumber: isNumber
 };

@@ -151,7 +151,6 @@ export default {
       //TODO: use value as key
       this.payMethodCurrent = 1;
     }
-    //this.checkIfPaied("2b8af81a7d834cab841d0818b954abf2");
   },
   onUnload() {
     clearInterval(this.intervalID);
@@ -246,7 +245,7 @@ export default {
       });
     },
     transfer(paymentPassword) {
-      console.log("开始转账", this.payMethod, paymentPassword);
+      // console.log("开始转账", this.payMethod);
       this.paymentPassword = paymentPassword;
       this.showInputPwd = false;
       this.loading = true;
@@ -267,11 +266,19 @@ export default {
           });
         })
         .catch(err => {
-          uni.showModal({
-            title: "转账失败",
-            content: err,
-            showCancel: false
-          });
+          if (err[0].message == "need_set_payment_password") {
+            // to set payment password
+            uni.navigateTo("/pages/settings/payment-password/payment-password");
+          }
+          if (typeof err === "string") {
+            uni.showModal({
+              title: "转账失败",
+              content: err,
+              showCancel: false
+            });
+          } else {
+            util.showTip(err);
+          }
         });
     }
   }

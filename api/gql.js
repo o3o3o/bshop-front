@@ -40,7 +40,15 @@ export function execute(query, variables = null, name = null) {
 		console.log("execute " + name + " result: ", res);
 		if (res.data && res.statusCode === 200) {
 			if (res.data.errors) {
-				return Promise.reject(res.data.errors[0]);
+				let err1 = res.data.errors[0];
+				if (
+					err1.message === "You do not have permission to perform this action"
+				) {
+					console.log("need login");
+					uni.navigateTo({ url: "/pages/login/login" });
+				} else {
+					return Promise.reject(err1);
+				}
 			}
 			return res.data.data[name];
 		} else if (res.statusCode === 400) {

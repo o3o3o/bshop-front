@@ -103,6 +103,20 @@ export function verifyToken(token) {
 	return execute(mutation, variables);
 }
 
+export function setPaymentPasswordApi(password) {
+	const mutation = `
+	  mutation ($password: String!){
+		      setPaymentPassword(password: $password){
+					          success
+						      }
+									  }
+		  `;
+	let variables = {
+		password: password
+	};
+	return mutate_without_result(mutation, variables);
+}
+
 export function bindThirdAccountApi(authCode, provider) {
 	const mutation = `
 	mutation _($authCode: String!, $provider: LoginProvider!) {

@@ -43,6 +43,15 @@
           "style": {}
         }
       ]
+    },
+    {
+      "root": "pages/settings",
+      "pages": [
+        {
+          "path": "payment-password/payment-password",
+          "style": {}
+        }
+      ]
     }
   ],
   "globalStyle": {
@@ -111,6 +120,11 @@
       {
         "name": "receivePay",
         "path": "pages/wallet/receivePay/receivePay",
+        "query": ""
+      },
+      {
+        "name": "payment-password",
+        "path": "pages/settings/payment-password/payment-password",
         "query": ""
       }
     ]
