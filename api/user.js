@@ -5,11 +5,11 @@ export function getMe() {
 	  query _{
 	         me{
 							id
-							avatar
-							nickname
+							avatarUrl: avatar
+							nickName: nickname
 							lastName
 							firstName
-							phone
+							hasPaymentPassword
 					 }
 	}`;
 	return execute(query);

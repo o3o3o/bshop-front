@@ -12,8 +12,9 @@
           <input
             class="amount"
             type="digit"
+            focus="true"
             v-model="amount"
-            maxlength="4"
+            maxlength="8"
             @input="amountChange"
           />
         </view>
@@ -41,8 +42,8 @@
           >
             <view>
               <radio
-                :value="item.value"
-                :checked="index === payMethodCurrent"
+                v-model="payMethodCurrent"
+                :checked="item.value === payMethodCurrent"
                 :disabled="zeroBalance && item.value === 'balance'"
               />
             </view>
@@ -55,7 +56,7 @@
         </radio-group>
       </view>
 
-      <view v-if="payMethodCurrent === 0">
+      <view v-if="payMethodCurrent === 'balance'">
         <best-payment-password
           :show="showInputPwd"
           :forget="false"
@@ -97,7 +98,7 @@ export default {
       note: "",
       paymentPassword: "",
       showInputPwd: false,
-      payMethodCurrent: 0,
+      payMethodCurrent: "balance",
       payMethods: [
         {
           value: "balance",
@@ -118,8 +119,16 @@ export default {
   },
   computed: {
     ...mapState(["balance"]),
+
     payMethod: function() {
-      return this.payMethods[this.payMethodCurrent].name;
+      for (var i = 0, len = this.payMethods.length; i < len; i++) {
+        let item = this.payMethods[i];
+
+        if (this.payMethodCurrent === item.value) {
+          return item.name;
+        }
+      }
+      return "balance";
     },
     payTo: function() {
       if (this.vendorName && this.vendorName.length > 0) {
@@ -129,10 +138,11 @@ export default {
       }
     },
     zeroBalance() {
-      if (this.balance && this.balance.total) {
-        return this.balance.total <= 0;
-      }
-      return false;
+      let res = Boolean(
+        this.balance && this.balance.total && this.balance.total <= 0
+      );
+      console.log("zeroBalance: ", res);
+      return res;
     }
   },
   onLoad(option) {
@@ -142,20 +152,39 @@ export default {
     }
     this.vendorId = option.vendorId;
     this.vendorName = decodeURI(option.vendorName);
-
-    this.$store.dispatch("syncBalance");
-
-    if (this.balance && this.balance.total > 0) {
-      this.payMethodCurrent = 0;
-    } else {
-      //TODO: use value as key
-      this.payMethodCurrent = 1;
-    }
   },
   onUnload() {
     clearInterval(this.intervalID);
   },
+  onShow() {
+    this.asyncBalance();
+    if (this.zeroBalance) {
+      console.log("switch to weixin");
+      this.payMethodCurrent = "weixin";
+    } else {
+      console.log("switch to balance");
+      this.payMethodCurrent = "balance";
+    }
+
+    if (this.hasSetPaymentPassword() === false) {
+      uni.showModal({
+        title: "提示",
+        content: "未设置支付密码",
+        showCancel: false,
+        confirmText: "去设置",
+        success: function(res) {
+          uni.navigateTo({
+            url: "/pages/settings/payment-password/payment-password"
+          });
+        }
+      });
+    }
+  },
   methods: {
+    ...mapMutations(["hasSetPaymentPassword"]),
+    async asyncBalance() {
+      return await this.$store.dispatch("syncBalance");
+    },
     payMethodChange(evt) {
       for (let i = 0; i < this.payMethods.length; i++) {
         if (this.payMethods[i].value === evt.target.value) {
@@ -176,7 +205,7 @@ export default {
       this.showInputPwd = !this.showInputPwd;
     },
     requestPayment() {
-      if (this.payMethodCurrent === 0) {
+      if (this.payMethodCurrent === "balance") {
         // pay with balance
         this.togglePayment();
       } else {
@@ -260,16 +289,12 @@ export default {
             success: function(res) {
               if (res.confirm) {
                 console.log("用户点击确定");
-                //TODO: go to last page?
+                uni.navigateBack();
               }
             }
           });
         })
         .catch(err => {
-          if (err[0].message == "need_set_payment_password") {
-            // to set payment password
-            uni.navigateTo("/pages/settings/payment-password/payment-password");
-          }
           if (typeof err === "string") {
             uni.showModal({
               title: "转账失败",

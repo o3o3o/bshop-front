@@ -55,6 +55,7 @@ export function signIn(phone = null, authCode = null, provider = null) {
 						  avatar
 							nickname
 							phone
+							hasPaymentPassword
 						}
 					}
 		  }`;
@@ -149,7 +150,8 @@ export function loginWithProvider(provider) {
 						id: res.me.id,
 						avatarUrl: res.me.avatar,
 						nickName: res.me.nickname,
-						phone: res.me.phone
+						phone: res.me.phone,
+						hasPaymentPassword: res.me.hasPaymentPassword
 					}
 				};
 				return data;

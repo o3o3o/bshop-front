@@ -11,7 +11,8 @@ var errMap = {
 	need_verify_phone: "需要短信认证",
 	invalid_phone: "手机号码格式不合法",
 	too_much_retry: "尝试次数过多",
-	not_vendor: "未入住商户, 不能收款"
+	not_vendor: "未入住商户, 不能收款",
+	already_exist_payment_password: "支付密码已设置, 请联系客户反馈"
 };
 
 function showTip(err, duration = 2500) {
@@ -111,6 +112,7 @@ function isNumber(s) {
 	let r = new RegExp("\\d{6}");
 	return r.test(s);
 }
+
 module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,

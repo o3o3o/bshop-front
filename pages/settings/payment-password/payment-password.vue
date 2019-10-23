@@ -8,7 +8,7 @@
           type="number"
           name="input"
           maxlength="6"
-          focus
+          focus="true"
           placeholder="请输入6位数字密码"
           :password="showPassword"
           v-model="password"
@@ -41,7 +41,7 @@ export default {
   onLoad() {},
   methods: {
     setPassword(e) {
-      console.log(e);
+      console.log(util, util.isNumber);
       if (!util.isNumber(this.password)) {
         console.log(util.isNumber(this.password), this.password);
         util.showTip("只允许为数字");
@@ -51,14 +51,22 @@ export default {
       setPaymentPasswordApi(this.password)
         .then(() => {
           util.showTip("设置密码成功");
+          this.asyncUserInfo();
           uni.navigateBack();
         })
         .catch(err => {
-          util.showTip(err);
+          if (err.message) {
+            util.showTip(err.message);
+          } else {
+            util.showTip(err);
+          }
         });
     },
     toggleShowPassword: function(e) {
       this.showPassword = !this.showPassword;
+    },
+    async asyncUserInfo() {
+      return await this.$store.dispatch("syncUserInfo");
     }
   }
 };

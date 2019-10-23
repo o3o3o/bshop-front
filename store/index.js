@@ -3,6 +3,9 @@ import Vuex from "vuex";
 import updateJwtToken from "@/api/gql";
 import { loginWithProvider } from "@/api/auth";
 import { getBalance } from "@/api/wallet";
+import { getMe } from "@/api/user";
+
+var util = require("@/common/util.js");
 
 Vue.use(Vuex);
 
@@ -36,7 +39,8 @@ const store = new Vuex.Store({
 				avatarUrl: res.avatarUrl,
 				nickName: res.nickName,
 				gender: res.gender,
-				country: res.country
+				country: res.country,
+				hasPaymentPassword: res.hasPaymentPassword
 			};
 			uni.setStorage({
 				key: "userInfo",
@@ -70,6 +74,9 @@ const store = new Vuex.Store({
 			uni.navigateTo({
 				url
 			});
+		},
+		hasSetPaymentPassword(state) {
+			return Boolean(state.userInfo && state.userInfo.hasPaymentPassword);
 		}
 	},
 	actions: {
@@ -111,6 +118,12 @@ const store = new Vuex.Store({
 		syncBalance({ commit, state }) {
 			return getBalance().then(data => {
 				commit("updateBalance", data);
+				return Promise.resolve(data);
+			});
+		},
+		syncUserInfo({ commit, state }) {
+			return getMe().then(data => {
+				commit("updateUserInfo", data);
 				return Promise.resolve(data);
 			});
 		}
