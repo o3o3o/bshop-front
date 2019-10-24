@@ -71,6 +71,7 @@
           <text>消费记录</text>
         </view>
         <view
+          v-if="userInfo && userInfo.isVendor"
           class="order-item"
           @click="navTo('/pages/wallet/receivePay/receivePay')"
           hover-class="common-hover"
@@ -113,7 +114,9 @@ export default {
     // console.log('Me: ', this.userInfo);
   },
   onShow() {
+    //TODO: merge the request
     this.$store.dispatch("syncBalance");
+    this.$store.dispatch("syncUserInfo");
   },
 
   computed: {

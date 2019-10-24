@@ -56,6 +56,7 @@ export function signIn(phone = null, authCode = null, provider = null) {
 							nickname
 							phone
 							hasPaymentPassword
+							isVendor
 						}
 					}
 		  }`;

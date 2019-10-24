@@ -40,7 +40,8 @@ const store = new Vuex.Store({
 				nickName: res.nickName,
 				gender: res.gender,
 				country: res.country,
-				hasPaymentPassword: res.hasPaymentPassword
+				hasPaymentPassword: res.hasPaymentPassword,
+				isVendor: res.isVendor
 			};
 			uni.setStorage({
 				key: "userInfo",

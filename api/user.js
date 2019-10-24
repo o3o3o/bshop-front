@@ -7,9 +7,8 @@ export function getMe() {
 							id
 							avatarUrl: avatar
 							nickName: nickname
-							lastName
-							firstName
 							hasPaymentPassword
+							isVendor
 					 }
 	}`;
 	return execute(query);
