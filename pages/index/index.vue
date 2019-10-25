@@ -25,7 +25,7 @@
         class="tool-item"
         hover-class="common-hover"
         :hover-stay-time="50"
-        @tap="deposit"
+        @tap="navTo('/pages/wallet/transfer/transfer')"
       >
         <text class="yticon icon-deposit"></text>
         <text>充值</text>
@@ -34,7 +34,7 @@
         class="tool-item"
         hover-class="common-hover"
         :hover-stay-time="50"
-        @tap="withdraw"
+        @tap="navTo('/pages/wallet/withdraw/withdraw')"
       >
         <text class="yticon icon-withdraw"></text>
         <text>提现</text>
@@ -64,6 +64,7 @@ export default {
     this.isLogin();
   },
   methods: {
+    ...mapMutations(["navTo"]),
     ...mapActions(["tryLoginWithProvider"]),
 
     isLogin() {
@@ -114,17 +115,6 @@ export default {
           console.log(err);
           util.showTip("识别二维码失败");
         }
-      });
-    },
-
-    deposit(e) {
-      uni.navigateTo({ url: "/pages/wallet/deposit/deposit" });
-      uni.requestPayment({
-        //provider: "",
-        orderInfo: "",
-        success: res => {},
-        fail: () => {},
-        complete: () => {}
       });
     }
   }

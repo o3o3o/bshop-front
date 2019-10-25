@@ -38,6 +38,7 @@
           <label
             class="uni-list-cell uni-list-cell-pd"
             v-for="(item, index) in payMethods"
+            v-if="isTransfer || item.value !== 'balance'"
             :key="item.value"
           >
             <view>
@@ -90,8 +91,8 @@ export default {
     return {
       title: "转账",
       amount: "",
-      vendorId: "",
-      vendorName: "",
+      vendorId: null,
+      vendorName: null,
       vendorImg: "",
       loading: false,
       disabled_pay_btn: true,
@@ -120,17 +121,20 @@ export default {
   computed: {
     ...mapState(["balance"]),
 
-    payMethod: function() {
+    payMethod() {
       for (var i = 0, len = this.payMethods.length; i < len; i++) {
         let item = this.payMethods[i];
-
         if (this.payMethodCurrent === item.value) {
           return item.name;
         }
       }
-      return "balance";
+      if (this.isTransfer) {
+        return "balance";
+      } else {
+        return "weixin";
+      }
     },
-    payTo: function() {
+    payTo() {
       if (this.vendorName && this.vendorName.length > 0) {
         return "支付给 " + this.vendorName;
       } else {
@@ -143,41 +147,46 @@ export default {
       );
       console.log("zeroBalance: ", res);
       return res;
+    },
+    isTransfer() {
+      return this.vendorId !== null && this.vendorName !== null;
     }
   },
   onLoad(option) {
-    if (!option.vendorId || !option.vendorName) {
-      console.error("cannot get vendorInfo from query:", option);
-      return;
+    if (option.vendorId && option.vendorName) {
+      this.vendorId = option.vendorId;
+      this.vendorName = decodeURI(option.vendorName);
     }
-    this.vendorId = option.vendorId;
-    this.vendorName = decodeURI(option.vendorName);
   },
   onUnload() {
     clearInterval(this.intervalID);
   },
   onShow() {
-    this.asyncBalance();
-    if (this.zeroBalance) {
-      console.log("switch to weixin");
-      this.payMethodCurrent = "weixin";
-    } else {
-      console.log("switch to balance");
-      this.payMethodCurrent = "balance";
-    }
+    if (this.isTransfer) {
+      this.asyncBalance();
+      if (this.zeroBalance) {
+        console.log("switch to weixin");
+        this.payMethodCurrent = "weixin";
+      } else {
+        console.log("switch to balance");
+        this.payMethodCurrent = "balance";
+      }
 
-    if (this.hasSetPaymentPassword() === false) {
-      uni.showModal({
-        title: "提示",
-        content: "未设置支付密码",
-        showCancel: false,
-        confirmText: "去设置",
-        success: function(res) {
-          uni.navigateTo({
-            url: "/pages/settings/payment-password/payment-password"
-          });
-        }
-      });
+      if (this.hasSetPaymentPassword() === false) {
+        uni.showModal({
+          title: "提示",
+          content: "未设置支付密码",
+          showCancel: false,
+          confirmText: "去设置",
+          success: function(res) {
+            uni.navigateTo({
+              url: "/pages/settings/payment-password/payment-password"
+            });
+          }
+        });
+      }
+    } else {
+      this.payMethodCurrent = "weixin";
     }
   },
   methods: {
@@ -206,10 +215,10 @@ export default {
     },
     requestPayment() {
       if (this.payMethodCurrent === "balance") {
-        // pay with balance
+        /* pay with balance */
         this.togglePayment();
       } else {
-        // pay with weixin, alipay....
+        /* pay with weixin, alipay.... */
         var payment;
         createPayOrder(this.amount, this.vendorId)
           .then(data => {
@@ -239,7 +248,7 @@ export default {
             // * new page
             uni.showModal({
               title: "付款成功",
-              content: this.payTo + " " + data.amount + "元",
+              content: that.payTo + " " + data.amount + "元",
               showCancel: false,
               success: function(res) {
                 if (res.confirm) {
@@ -278,13 +287,14 @@ export default {
       this.paymentPassword = paymentPassword;
       this.showInputPwd = false;
       this.loading = true;
+      var that = this;
       //TODO: balance
       transferPay(this.vendorId, this.amount, this.paymentPassword, this.note)
         .then(res => {
-          console.log("transfer success");
+          console.log("transfer success", res);
           uni.showModal({
             title: "转账成功",
-            content: this.payTo + " " + this.amount + "元",
+            content: that.payTo + " " + that.amount + "元",
             showCancel: false,
             success: function(res) {
               if (res.confirm) {

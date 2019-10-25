@@ -16,7 +16,7 @@
 
       <view class="vip-card-box">
         <image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
-        <view class="b-btn" @click="navTo('/pages/wallet/deposit/deposit')"
+        <view class="b-btn" @click="navTo('/pages/wallet/transfer/transfer')"
           >立即充值</view
         >
         <view class="tit">

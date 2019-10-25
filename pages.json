@@ -31,10 +31,6 @@
           "style": {}
         },
         {
-          "path": "deposit/deposit",
-          "style": {}
-        },
-        {
           "path": "withdraw/withdraw",
           "style": {}
         },
@@ -113,8 +109,8 @@
         "query": "vendorId=e5233fba-952e-4d96-8832-5fdf56fa199c&vendorName=hello"
       },
       {
-        "name": "deposit",
-        "path": "pages/wallet/deposit/deposit",
+        "name": "withdraw",
+        "path": "pages/wallet/withdraw/withdraw",
         "query": ""
       },
       {
