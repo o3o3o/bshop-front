@@ -93,6 +93,23 @@ export function transferPay(to_uuid, amount, paymentPassword, note = null) {
 	return mutate_without_result(mutation, variables);
 }
 
+export function withdraw(amount, paymentPassword, note = null) {
+	const mutation = `
+	 mutation _($input: WithdrawInput!){
+					withdraw(input: $input){
+							success
+					}
+	}`;
+	let variables = {
+		input: {
+			amount: amount,
+			requestId: uuidv4(),
+			provider: store.state.loginProvider
+		}
+	};
+	return mutate_without_result(mutation, variables);
+}
+
 export function getBalance() {
 	const query = `
       query{

@@ -43,7 +43,7 @@
           >
             <view>
               <radio
-                v-model="payMethodCurrent"
+                :value="item.value"
                 :checked="item.value === payMethodCurrent"
                 :disabled="zeroBalance && item.value === 'balance'"
               />
@@ -195,12 +195,7 @@ export default {
       return await this.$store.dispatch("syncBalance");
     },
     payMethodChange(evt) {
-      for (let i = 0; i < this.payMethods.length; i++) {
-        if (this.payMethods[i].value === evt.target.value) {
-          this.payMethodCurrent = i;
-          break;
-        }
-      }
+      this.payMethodCurrent = evt.target.value;
     },
     amountChange(e) {
       this.amount = e.detail.value;
@@ -214,6 +209,7 @@ export default {
       this.showInputPwd = !this.showInputPwd;
     },
     requestPayment() {
+      this.loading = true;
       if (this.payMethodCurrent === "balance") {
         /* pay with balance */
         this.togglePayment();
@@ -234,6 +230,7 @@ export default {
           .catch(err => {
             console.log("pay err: ", err);
             util.showTip(err);
+            this.loading = false;
           });
       }
     },
@@ -261,7 +258,7 @@ export default {
           .catch(err => {
             console.log("pay failed: ", err);
           });
-      }, 1000);
+      }, 3000);
     },
 
     isPaied(orderId) {
@@ -305,15 +302,8 @@ export default {
           });
         })
         .catch(err => {
-          if (typeof err === "string") {
-            uni.showModal({
-              title: "转账失败",
-              content: err,
-              showCancel: false
-            });
-          } else {
-            util.showTip(err);
-          }
+          this.loading = false;
+          util.showFailModal("转账失败", err);
         });
     }
   }
