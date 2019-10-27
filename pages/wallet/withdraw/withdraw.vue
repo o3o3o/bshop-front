@@ -80,11 +80,12 @@ export default {
         util.showTip("余额不足");
       }
       this.loading = true;
+      var that = this;
       withdraw(this.amount)
         .then(res => {
           uni.showModal({
             title: "提示",
-            content: `提现 ${this.amount}  元, 已加入提现队列,  可能有些许延迟，请稍后查看微信支付通知`,
+            content: `提现 ${that.amount}  元, 已加入提现队列,  可能有些许延迟，请稍后查看微信支付通知`,
             showCancel: false,
             success: function(res) {
               if (res.confirm) {
@@ -100,7 +101,7 @@ export default {
             content: JSON.stringify(err.message || err),
             showCancel: false,
             success: function() {
-              this.loading = false;
+             that.loading = false;
             }
           });
         });

@@ -12,6 +12,7 @@
       </view>
 
       <view
+        v-if="isDevelop"
         class="tool-item"
         hover-class="common-hover"
         :hover-stay-time="50"
@@ -59,7 +60,11 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    isDevelop() {
+      return process.env.NODE_ENV === "development";
+    }
+  },
   onLoad() {
     this.isLogin();
   },
