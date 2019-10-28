@@ -114,9 +114,7 @@ export default {
     // console.log('Me: ', this.userInfo);
   },
   onShow() {
-    //TODO: merge the request
-    this.$store.dispatch("syncBalance");
-    this.$store.dispatch("syncUserInfo");
+    this.$store.dispatch("syncUserInfoWithBalance");
   },
 
   computed: {

@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import {
   transferPay,
   createPayOrder,
@@ -120,6 +120,7 @@ export default {
   },
   computed: {
     ...mapState(["balance"]),
+    ...mapGetters(["hasSetPaymentPassword"]),
 
     payMethod() {
       for (var i = 0, len = this.payMethods.length; i < len; i++) {
@@ -162,17 +163,22 @@ export default {
     clearInterval(this.intervalID);
   },
   onShow() {
-    if (this.isTransfer) {
-      this.asyncBalance();
-      if (this.zeroBalance) {
+    if (!this.isTransfer) {
+      this.payMethodCurrent = "weixin";
+      return;
+    }
+    var that = this;
+    this.$store.dispatch("syncUserInfoWithBalance").then(() => {
+      if (that.zeroBalance) {
         console.log("switch to weixin");
-        this.payMethodCurrent = "weixin";
+        that.payMethodCurrent = "weixin";
       } else {
         console.log("switch to balance");
-        this.payMethodCurrent = "balance";
+        that.payMethodCurrent = "balance";
       }
 
-      if (this.hasSetPaymentPassword() === false) {
+      console.log(that.hasSetPaymentPassword, that.hasSetPaymentPassword);
+      if (that.hasSetPaymentPassword === false) {
         uni.showModal({
           title: "提示",
           content: "未设置支付密码",
@@ -185,14 +191,12 @@ export default {
           }
         });
       }
-    } else {
-      this.payMethodCurrent = "weixin";
-    }
+    });
   },
   methods: {
-    ...mapMutations(["hasSetPaymentPassword"]),
-    async asyncBalance() {
-      return await this.$store.dispatch("syncBalance");
+    //TODO: async call blockly?
+    async asyncUserInfoWithBalance() {
+      return await this.$store.dispatch("syncUserInfoWithBalance");
     },
     payMethodChange(evt) {
       this.payMethodCurrent = evt.target.value;

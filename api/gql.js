@@ -32,11 +32,6 @@ export function execute(query, variables = null, name = null) {
 			name = parseQueryName(query);
 		}
 
-		if (name === null) {
-			//TODO: parse name mutiple....
-			throw "Do not support parse name: " + query;
-		}
-
 		console.log("execute " + name + " result: ", res);
 		if (res.data && res.statusCode === 200) {
 			if (res.data.errors) {
@@ -50,7 +45,11 @@ export function execute(query, variables = null, name = null) {
 					return Promise.reject(err1);
 				}
 			}
-			return res.data.data[name];
+			if (name) {
+				return res.data.data[name];
+			} else {
+				return res.data.data;
+			}
 		} else if (res.statusCode === 400) {
 			let err = res.data.errors;
 			console.error(err);

@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import updateJwtToken from "@/api/gql";
 import { loginWithProvider } from "@/api/auth";
 import { getBalance } from "@/api/wallet";
-import { getMe } from "@/api/user";
+import { getMe, getUserInfoWithBalance } from "@/api/user";
 
 var util = require("@/common/util.js");
 
@@ -25,6 +25,11 @@ const store = new Vuex.Store({
 		},
 		getToken(state) {
 			return state.token || uni.getStorage({ key: "token" });
+		},
+		hasSetPaymentPassword(state) {
+			var res = Boolean(state.userInfo && state.userInfo.hasPaymentPassword);
+			console.log("hasSetPaymentPassword", res);
+			return res;
 		}
 	},
 	mutations: {
@@ -34,7 +39,7 @@ const store = new Vuex.Store({
 			updateJwtToken(token);
 		},
 		updateUserInfo(state, res) {
-			console.log("updateUserInfo for", state.loginProvider);
+			//console.log("updateUserInfo for", state.loginProvider);
 			let userInfo = {
 				avatarUrl: res.avatarUrl,
 				nickName: res.nickName,
@@ -49,7 +54,7 @@ const store = new Vuex.Store({
 			});
 			state.userInfo = userInfo;
 
-			console.log("Updated userinfo：" + state.userInfo);
+			//console.log("Updated userinfo：" + state.userInfo);
 		},
 		login(state, token) {
 			state.hasLogin = true;
@@ -75,9 +80,6 @@ const store = new Vuex.Store({
 			uni.navigateTo({
 				url
 			});
-		},
-		hasSetPaymentPassword(state) {
-			return Boolean(state.userInfo && state.userInfo.hasPaymentPassword);
 		}
 	},
 	actions: {
@@ -125,6 +127,13 @@ const store = new Vuex.Store({
 		syncUserInfo({ commit, state }) {
 			return getMe().then(data => {
 				commit("updateUserInfo", data);
+				return Promise.resolve(data);
+			});
+		},
+		syncUserInfoWithBalance({ commit, state }) {
+			return getUserInfoWithBalance().then(data => {
+				commit("updateUserInfo", data.me);
+				commit("updateBalance", data.fund);
 				return Promise.resolve(data);
 			});
 		}
