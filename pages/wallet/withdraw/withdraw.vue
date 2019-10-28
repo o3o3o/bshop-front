@@ -44,6 +44,7 @@ var util = require("@/common/util.js");
 export default {
   data() {
     return {
+      title: "提现",
       amount: "",
       loading: false,
       disabled_pay_btn: true

@@ -119,6 +119,11 @@
         "query": ""
       },
       {
+        "name": "history",
+        "path": "pages/wallet/history/history",
+        "query": ""
+      },
+      {
         "name": "payment-password",
         "path": "pages/settings/payment-password/payment-password",
         "query": ""

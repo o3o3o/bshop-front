@@ -33,6 +33,36 @@ export function createPayOrder(amount, to_uuid = null) {
 	});
 }
 
+export function getLedgers(after = null) {
+	const query = `
+		query ($after: String){
+			ledgerList(after: $after){
+				edges{
+					node{
+						id
+						type
+						amount
+						note
+						status
+						orderId
+						createdAt
+					}
+				}
+				 pageInfo{
+						startCursor
+						endCursor
+						hasNextPage
+						hasPreviousPage
+				 }			
+			}
+		}
+	`;
+	let variables = {
+		before: null
+	};
+	return execute(query, variables);
+}
+
 export function getOrderState(orderId) {
 	const query = `
 		query _($orderId: String!, $provider: LoginProvider!){
