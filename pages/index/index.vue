@@ -105,7 +105,7 @@ export default {
 
           let parsed = parse(res.result);
 
-          if (res.scanType === "QR_CODE" && parsed.provider === "bshop:") {
+          if (res.scanType === "QR_CODE" && parsed.protocol === "bshop:") {
             let query = handelQr(res.result);
             console.log("qr query: ", query);
             let url = "/pages/wallet/transfer/transfer" + query;

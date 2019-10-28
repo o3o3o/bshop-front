@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     qrcodeR(e) {
-      console.log(e);
+      //console.log(e);
     }
   },
   onLoad() {
@@ -49,6 +49,7 @@ export default {
     getReceivePayQr()
       .then(res => {
         this.val = res.qr;
+        //console.log(this.val);
       })
       .catch(err => {
         if (err.message) {

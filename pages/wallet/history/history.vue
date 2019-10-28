@@ -108,7 +108,7 @@ export default {
           } else {
             that.listData = list;
           }
-          console.log("listData: ", that.listData);
+          //console.log("listData: ", that.listData);
         })
         .catch(err => {
           util.showTip(err);
