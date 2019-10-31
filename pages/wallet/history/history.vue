@@ -71,9 +71,7 @@ export default {
   },
   computed: {},
   onLoad() {
-    uni.showLoading({
-      title: "加载中"
-    });
+    util.showLoadingMask();
     this.getList().finally(() => {
       uni.hideLoading();
     });

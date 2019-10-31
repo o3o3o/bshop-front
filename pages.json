@@ -28,7 +28,9 @@
         },
         {
           "path": "history/history",
-          "style": {}
+          "style": {
+            "enablePullDownRefresh": true
+          }
         },
         {
           "path": "withdraw/withdraw",

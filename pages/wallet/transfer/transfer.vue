@@ -169,9 +169,7 @@ export default {
     }
     var that = this;
 
-    uni.showLoading({
-      title: "加载中"
-    });
+    util.showLoadingMask();
 
     this.$store
       .dispatch("syncUserInfoWithBalance")

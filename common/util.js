@@ -5,6 +5,12 @@ function showToast(msg, duration = 2500) {
 		duration: duration
 	});
 }
+function showLoadingMask(title = "加载中...", mask = true) {
+	uni.showLoading({
+		title: title,
+		mask: mask
+	});
+}
 
 var errMap = {
 	wrong_verification_code: "验证码不正确",
@@ -55,5 +61,6 @@ module.exports = {
 	showToast: showToast,
 	showTip: showTip,
 	showFailModal: showFailModal,
+	showLoadingMask: showLoadingMask,
 	isNumber: isNumber
 };

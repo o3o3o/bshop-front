@@ -66,9 +66,7 @@ export default {
     }
   },
   onLoad() {
-    uni.showLoading({
-      title: "加载中"
-    });
+    util.showLoadingMask();
 
     this.isLogin()
       .catch(err => {

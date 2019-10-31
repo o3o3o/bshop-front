@@ -53,9 +53,7 @@ export default {
   onLoad() {},
   onShow() {
     // sync balance
-    uni.showLoading({
-      title: "加载中"
-    });
+    util.showLoadingMask();
     this.$store.dispatch("syncBalance").finally(() => {
       uni.hideLoading();
     });
