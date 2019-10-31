@@ -38,7 +38,7 @@ export default {
   font-family: "yticon";
   font-weight: normal;
   font-style: normal;
-  src: url("https://at.alicdn.com/t/font_1447394_iuovhqmzpgp.ttf")
+  src: url("https://at.alicdn.com/t/font_1447394_g9wcjubel94.ttf")
     format("truetype");
 }
 
@@ -56,7 +56,7 @@ export default {
   content: "\e654";
 }
 .icon-receivePay:before {
-  content: "\e606";
+  content: "\e652";
 }
 .icon-bill:before {
   content: "\e619";
