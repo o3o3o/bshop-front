@@ -71,7 +71,12 @@ export default {
   },
   computed: {},
   onLoad() {
-    this.getList();
+    uni.showLoading({
+      title: "加载中"
+    });
+    this.getList().finally(() => {
+      uni.hideLoading();
+    });
   },
   onReachBottom() {
     if (this.hasNext) {
@@ -97,7 +102,7 @@ export default {
       */
 
       var that = this;
-      getLedgers(this.lastId)
+      return getLedgers(this.lastId)
         .then(data => {
           let list = that.toList(data["edges"]);
           that.hasNext = data["pageInfo"]["hasNextPage"];

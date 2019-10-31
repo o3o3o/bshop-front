@@ -168,30 +168,40 @@ export default {
       return;
     }
     var that = this;
-    this.$store.dispatch("syncUserInfoWithBalance").then(() => {
-      if (that.zeroBalance) {
-        console.log("switch to weixin");
-        that.payMethodCurrent = "weixin";
-      } else {
-        console.log("switch to balance");
-        that.payMethodCurrent = "balance";
-      }
 
-      console.log(that.hasSetPaymentPassword, that.hasSetPaymentPassword);
-      if (that.hasSetPaymentPassword === false) {
-        uni.showModal({
-          title: "提示",
-          content: "未设置支付密码",
-          showCancel: false,
-          confirmText: "去设置",
-          success: function(res) {
-            uni.navigateTo({
-              url: "/pages/settings/payment-password/payment-password"
-            });
-          }
-        });
-      }
+    uni.showLoading({
+      title: "加载中"
     });
+
+    this.$store
+      .dispatch("syncUserInfoWithBalance")
+      .then(() => {
+        if (that.zeroBalance) {
+          console.log("switch to weixin");
+          that.payMethodCurrent = "weixin";
+        } else {
+          console.log("switch to balance");
+          that.payMethodCurrent = "balance";
+        }
+
+        console.log(that.hasSetPaymentPassword, that.hasSetPaymentPassword);
+        if (that.hasSetPaymentPassword === false) {
+          uni.showModal({
+            title: "提示",
+            content: "未设置支付密码",
+            showCancel: false,
+            confirmText: "去设置",
+            success: function(res) {
+              uni.navigateTo({
+                url: "/pages/settings/payment-password/payment-password"
+              });
+            }
+          });
+        }
+      })
+      .finally(res => {
+        uni.hideLoading();
+      });
   },
   methods: {
     //TODO: async call blockly?

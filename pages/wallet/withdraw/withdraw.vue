@@ -53,7 +53,12 @@ export default {
   onLoad() {},
   onShow() {
     // sync balance
-    this.asyncBalance();
+    uni.showLoading({
+      title: "加载中"
+    });
+    this.$store.dispatch("syncBalance").finally(() => {
+      uni.hideLoading();
+    });
   },
   computed: {
     ...mapState(["balance"]),
@@ -66,9 +71,6 @@ export default {
     }
   },
   methods: {
-    async asyncBalance() {
-      return await this.$store.dispatch("syncBalance");
-    },
     amountChange(e) {
       if (this.amount > 0 && this.amount <= this.withdrawableAmount) {
         this.disabled_pay_btn = false;
@@ -102,7 +104,7 @@ export default {
             content: JSON.stringify(err.message || err),
             showCancel: false,
             success: function() {
-             that.loading = false;
+              that.loading = false;
             }
           });
         });

@@ -143,7 +143,7 @@ export function bindAccount() {
 export function loginWithProvider(provider) {
 	return store.dispatch("getAuthCode").then(authCode => {
 		return signIn(null, authCode, provider).then(res => {
-			console.log("signIn with authcode: ", res);
+			// console.log("signIn with authcode: ", res);
 			if (res.me) {
 				var data = {
 					token: res.token,

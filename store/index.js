@@ -106,10 +106,10 @@ const store = new Vuex.Store({
 			}
 			return loginWithProvider(state.loginProvider)
 				.then(data => {
-					console.log(data);
+					//console.log(data);
 					commit("login", data.token);
 					commit("updateUserInfo", data.userInfo);
-					console.log("loginProvider, success: ", data);
+					// console.log("loginProvider, success: ", data);
 					return "success";
 				})
 				.catch(err => {

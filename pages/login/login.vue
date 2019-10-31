@@ -39,6 +39,7 @@ export default {
     ...mapMutations(["login", "cleanAuthCode"]),
 
     sendVerifyCode(e) {
+      uni.hideKeyboard();
       console.log(e.phoneNumber);
       requestVerificationCode(e.phoneNumber)
         .then(() => {

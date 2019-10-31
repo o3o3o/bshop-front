@@ -114,7 +114,12 @@ export default {
     // console.log('Me: ', this.userInfo);
   },
   onShow() {
-    this.$store.dispatch("syncUserInfoWithBalance");
+    uni.showLoading({
+      title: "加载中"
+    });
+    this.$store.dispatch("syncUserInfoWithBalance").finally(() => {
+      uni.hideLoading();
+    });
   },
 
   computed: {

@@ -66,16 +66,27 @@ export default {
     }
   },
   onLoad() {
-    this.isLogin();
+    uni.showLoading({
+      title: "加载中"
+    });
+
+    this.isLogin()
+      .catch(err => {
+        console.log("网络请求错误", err);
+      })
+      .finally(res => {
+        uni.hideLoading();
+      });
   },
   methods: {
     ...mapMutations(["navTo"]),
     ...mapActions(["tryLoginWithProvider"]),
 
     isLogin() {
-      this.$store.dispatch("tryLoginWithProvider").catch(err => {
+      return this.$store.dispatch("tryLoginWithProvider").catch(err => {
         console.log("isLogin error: ", err);
         uni.reLaunch({ url: "/pages/login/login" });
+        return;
       });
     },
     mockScanQR() {
