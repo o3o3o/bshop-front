@@ -65,7 +65,7 @@ export default {
         WITHDRAW: "提现",
         DEPOSIT: "充值",
         CASHBACK: "返现",
-        TRANSFER: "消费"
+        TRANSFER: "转账"
       }
     };
   },

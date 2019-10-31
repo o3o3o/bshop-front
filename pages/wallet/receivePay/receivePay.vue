@@ -6,12 +6,8 @@
           ref="qrcode"
           :val="val"
           :size="size"
-          :background="background"
-          :foreground="foreground"
-          :pdground="pdground"
           :onval="onval"
           :loadMake="loadMake"
-          @result="qrcodeR"
         />
       </view>
     </view>
@@ -31,18 +27,11 @@ export default {
       val: "",
       loadMake: true,
       onval: true,
-      background: "#000000",
-      foreground: "#ffffff",
-      pdground: "#ffffff",
-      size: 600,
+      size: 700,
       show: true
     };
   },
-  methods: {
-    qrcodeR(e) {
-      //console.log(e);
-    }
-  },
+  methods: {},
   onLoad() {
     // request for receivepay qr content
     //console.log("onload qr page");

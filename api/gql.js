@@ -27,38 +27,45 @@ export default function updateJwtToken(token) {
 }
 
 export function execute(query, variables = null, name = null) {
-	return gqlc.query(query, variables).then(res => {
-		if (name === null) {
-			name = parseQueryName(query);
-		}
+	return gqlc
+		.query(query, variables)
+		.then(res => {
+			if (name === null) {
+				name = parseQueryName(query);
+			}
 
-		console.log("execute " + name + " result: ", res);
-		if (res.data && res.statusCode === 200) {
-			if (res.data.errors) {
-				let err1 = res.data.errors[0];
-				if (
-					err1.message === "You do not have permission to perform this action"
-				) {
-					console.log("need login");
-					uni.navigateTo({ url: "/pages/login/login" });
-				} else {
-					return Promise.reject(err1);
+			console.log("execute " + name + " result: ", res);
+			if (res.data && res.statusCode === 200) {
+				if (res.data.errors) {
+					let err1 = res.data.errors[0];
+					if (
+						err1.message === "You do not have permission to perform this action"
+					) {
+						console.log("need login");
+						return uni.navigateTo({ url: "/pages/login/login" });
+					} else {
+						console.error("gql error: ", res);
+						return Promise.reject(err1);
+					}
 				}
-			}
-			if (name) {
-				return res.data.data[name];
+				if (name) {
+					return res.data.data[name];
+				} else {
+					return res.data.data;
+				}
+			} else if (res.statusCode === 400) {
+				let err = res.data.errors;
+				console.error("execute 400 faile: ", err);
+				Promise.reject(err);
 			} else {
-				return res.data.data;
+				console.error("execute failed with other code: ", res);
+				Promise.reject(res);
 			}
-		} else if (res.statusCode === 400) {
-			let err = res.data.errors;
-			console.error(err);
+		})
+		.catch(err => {
+			console.error("execute gql failed: ", err);
 			Promise.reject(err);
-		} else {
-			console.error(res);
-			Promise.reject(res);
-		}
-	});
+		});
 }
 
 export function mutate_without_result(query, variables, name) {
