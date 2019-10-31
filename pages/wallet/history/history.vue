@@ -107,9 +107,9 @@ export default {
           that.lastId = data["pageInfo"]["endCursor"];
 
           if (that.reload) {
-            that.listData = that.listData.concat(list);
-          } else {
             that.listData = list;
+          } else {
+            that.listData = that.listData.concat(list);
           }
           //console.log("listData: ", that.listData);
         })
