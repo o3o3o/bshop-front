@@ -21,6 +21,9 @@ import {
 } from "@/api/auth";
 var util = require("@/common/util.js");
 import { mapState, mapMutations } from "vuex";
+
+//TODO: get phone number 
+// https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html
 export default {
   data() {
     return {
