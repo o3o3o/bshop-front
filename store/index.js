@@ -14,7 +14,8 @@ Vue.use(Vuex);
 
 if (process.env.NODE_ENV === "development") {
 	console.log("开发环境");
-	serverUrl = "http://192.168.1.107:8000/api/gql";
+	//serverUrl = "http://192.168.1.107:8000/api/gql";
+	serverUrl = "http://127.0.0.1:8000/api/gql";
 } else {
 	console.log("生产环境");
 	serverUrl = "https://jz.signver.xyz/api/gql";
@@ -52,7 +53,7 @@ const store = new Vuex.Store({
 		updateToken(state, token) {
 			state.token = token;
 			uni.setStorage({ key: "token", data: token });
-			this.updateJwtToken(token);
+			this.commit("updateJwtToken", token);
 		},
 		updateJwtToken(state, token) {
 			//TODO: update and refresh jwt token

@@ -3,9 +3,10 @@ import store from "@/store";
 var { parse } = require("parse-graphql");
 
 console.log("store: ", store);
-console.log(store, store.state.gqlc);
+//console.log(store, store.state.gqlc);
 
 export function execute(query, variables = null, name = null) {
+	console.log("store in execute ", store);
 	return store.state.gqlc
 		.query(query, variables)
 		.then(res => {
