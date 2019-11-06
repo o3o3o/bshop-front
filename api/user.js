@@ -1,4 +1,4 @@
-import { gqlc, execute } from "@/api/gql.js";
+import { execute } from "@/api/gql.js";
 
 export function getMe() {
 	const query = `

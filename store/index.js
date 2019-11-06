@@ -1,13 +1,25 @@
+// https://github.com/kqtec/graphql-uni-app-client
+import client from "@kqtec/graphql-uni-app-client";
+
 import Vue from "vue";
 import Vuex from "vuex";
-import updateJwtToken from "@/api/gql";
 import { loginWithProvider } from "@/api/auth";
 import { getBalance } from "@/api/wallet";
 import { getMe, getUserInfoWithBalance } from "@/api/user";
 
 var util = require("@/common/util.js");
+var serverUrl;
 
 Vue.use(Vuex);
+
+if (process.env.NODE_ENV === "development") {
+	console.log("开发环境");
+	//serverUrl = "http://192.168.1.107:8000/api/gql";
+	serverUrl = "http://127.0.0.1:8000/api/gql";
+} else {
+	console.log("生产环境");
+	serverUrl = "https://jz.signver.xyz/api/gql";
+}
 
 const store = new Vuex.Store({
 	state: {
@@ -17,7 +29,12 @@ const store = new Vuex.Store({
 		token: null,
 		userInfo: null,
 		phone: null,
-		balance: null
+		balance: null,
+		gqlc: new client({
+			uri: serverUrl,
+			//TODO: add headers? or use lokka-transport-jwt-auth?
+			headers: {}
+		})
 	},
 	getters: {
 		getUserInfo(state) {
@@ -36,7 +53,13 @@ const store = new Vuex.Store({
 		updateToken(state, token) {
 			state.token = token;
 			uni.setStorage({ key: "token", data: token });
-			updateJwtToken(token);
+			this.commit("updateJwtToken", token);
+		},
+		updateJwtToken(state, token) {
+			//TODO: update and refresh jwt token
+			//https://github.com/kadirahq/lokka-transport-jwt-auth/blob/master/src/index.js
+			state.gqlc.$client._transport._$headers.Authorization = "JWT " + token;
+			// console.log("update to new token: ", gqlc.$client._transport._$headers);
 		},
 		updateUserInfo(state, res) {
 			//console.log("updateUserInfo for", state.loginProvider);
