@@ -289,7 +289,7 @@ export default {
   },
   mounted() {
     if (process.env.NODE_ENV === "development") {
-      this.phoneNumber = "13812345678";
+      this.phoneNumber = "13812345679";
       this.code = "123456";
     }
 

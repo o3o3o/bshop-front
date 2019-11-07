@@ -92,6 +92,7 @@ export default {
   methods: {
     _makeCode() {
       let that = this;
+      //console.log("qr: ", that);
       if (!this._empty(this.val)) {
         qrcode = new QRCode({
           context: that, // 上下文环境

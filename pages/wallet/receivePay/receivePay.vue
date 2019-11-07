@@ -7,14 +7,17 @@
           :val="val"
           :size="size"
           :onval="onval"
+          :icon="iconPath"
           :loadMake="loadMake"
         />
       </view>
+      <text v-if="userInfo.vendorName">{{ userInfo.vendorName }} </text>
     </view>
   </view>
 </template>
 
 <script>
+import { mapState } from "vuex";
 // https://github.com/q310550690/uni-app-qrcode
 import tkiQrcode from "@/components/tki-qrcode/tki-qrcode.vue";
 import { getReceivePayQr } from "@/api/user";
@@ -27,17 +30,34 @@ export default {
       val: "",
       loadMake: true,
       onval: true,
-      size: 700,
+      size: 500,
+      iconPath: "",
       show: true
     };
   },
+  computed: {
+    ...mapState(["userInfo"])
+  },
   methods: {},
   onLoad() {
+    var that = this;
     // request for receivepay qr content
     //console.log("onload qr page");
     getReceivePayQr()
       .then(res => {
-        this.val = res.qr;
+        uni.downloadFile({
+          url: that.userInfo.avatarUrl,
+          success: res => {
+            if (res.statusCode === 200) {
+              that.iconPath = res.tempFilePath;
+              //console.log("download path: ", that.iconPath);
+            }
+          },
+          complete() {
+            that.val = res.qr;
+          }
+        });
+        //console.log(that.iconPath);
         //console.log(this.val);
       })
       .catch(err => {
