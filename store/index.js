@@ -102,12 +102,15 @@ const store = new Vuex.Store({
 		navTo(state, url) {
 			if (!state.hasLogin) {
 				this.dispatch("tryLoginWithProvider").catch(err => {
-					url = "/pages/login/login";
+					uni.navigateTo({
+						url: "/pages/login/login"
+					});
+				});
+			} else {
+				uni.navigateTo({
+					url
 				});
 			}
-			uni.navigateTo({
-				url
-			});
 		}
 	},
 	actions: {

@@ -83,7 +83,7 @@ export default {
     isLogin() {
       return this.$store.dispatch("tryLoginWithProvider").catch(err => {
         console.log("isLogin error: ", err);
-        uni.reLaunch({ url: "/pages/login/login" });
+        //uni.reLaunch({ url: "/pages/login/login" });
         return;
       });
     },

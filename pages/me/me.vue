@@ -16,13 +16,20 @@
 
       <view class="vip-card-box">
         <image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
-        <view class="b-btn" @click="navTo('/pages/wallet/transfer/transfer')"
-          >立即充值</view
-        >
-        <view class="tit">
-          <text class="yticon icon-iLinkapp-"></text>
-          会员
-        </view>
+        <block v-if="hasLogin">
+          <view class="b-btn" @click="navTo('/pages/wallet/transfer/transfer')"
+            >立即充值</view
+          >
+          <view class="tit">
+            <text class="yticon icon-iLinkapp-"></text>
+            会员
+          </view>
+        </block>
+        <block v-else>
+          <view class="b-btn" @click="navTo('/pages/login/login')"
+            >立即登录</view
+          >
+        </block>
 
         <text class="e-b">加入聚赢会员，消费得返现</text>
       </view>
@@ -114,7 +121,9 @@ export default {
     // console.log('Me: ', this.userInfo);
   },
   onShow() {
-    this.$store.dispatch("syncUserInfoWithBalance").finally(() => {});
+    if (this.hasLogin) {
+      this.$store.dispatch("syncUserInfoWithBalance").finally(() => {});
+    }
   },
 
   computed: {

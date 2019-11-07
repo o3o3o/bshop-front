@@ -266,7 +266,7 @@ export default {
       console.log("toindex, ", this.url);
       uni.hideKeyboard();
       uni.reLaunch({ url: this.url });
-      uni.navigateBack();
+      //uni.navigateBack();
     },
     nextSwiper(index) {
       this.swiperCurrent = index;
