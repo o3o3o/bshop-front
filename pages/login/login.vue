@@ -12,17 +12,15 @@
 <script>
 import wsAuth from "@/components/wsure-authorize/authorize.vue";
 import {
-  signIn,
-  signUp,
+  signUpBindAccount,
   verifyCodeApi,
   requestVerificationCode,
-  bindAccount,
   updateUserInfoApi
 } from "@/api/auth";
 var util = require("@/common/util.js");
 import { mapState, mapMutations } from "vuex";
 
-//TODO: get phone number 
+//TODO: get phone number
 // https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html
 export default {
   data() {
@@ -61,25 +59,28 @@ export default {
       var that = this;
       verifyCodeApi(e.phoneNumber, e.code)
         .then(() => {
-          signUp(e.phoneNumber).then(res => {
+          var userInfo = {
+            nickname: that.userInfo.nickName,
+            avatarUrl: that.userInfo.avatarUrl
+          };
+          return signUpBindAccount(e.phoneNumber, userInfo).then(res => {
             console.log("signUp with phone: ", res);
             that.login(res.token);
 
+            // isChecked: 0:未验证 1:验证成功 2:验证失败
+            that.isChecked = 1;
+
+            //TODO: go to next page?
+
+            //FIXME: global login state
+            /*
             if (!res.me.avatarUrl || !res.me.nickName) {
               updateUserInfoApi(
                 that.userInfo.nickName,
                 that.userInfo.avatarUrl
               );
             }
-          });
-        })
-        .then(() => {
-          return bindAccount().then(res => {
-            console.log("bindAccount: ", res);
-            // isChecked: 0:未验证 1:验证成功 2:验证失败
-
-            that.isChecked = 1;
-            //TODO: go to next page?
+            */
           });
         })
         .catch(err => {

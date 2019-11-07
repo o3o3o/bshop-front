@@ -14,7 +14,7 @@ export function requestVerificationCode(phone) {
 	let variables = {
 		phone: phone
 	};
-	return mutate_without_result(mutation, variables);
+	return mutate_without_result(mutation, variables, null, false);
 }
 
 export function verifyCodeApi(phone, code) {
@@ -29,7 +29,7 @@ export function verifyCodeApi(phone, code) {
 		phone: phone,
 		code: code
 	};
-	return mutate_without_result(mutation, variables);
+	return mutate_without_result(mutation, variables, null, false);
 }
 
 var providerMap = {
@@ -69,13 +69,19 @@ export function signIn(phone = null, authCode = null, provider = null) {
 		authCode: authCode,
 		provider: provider
 	};
-	return execute(mutation, variables);
+	return execute(mutation, variables, null, false);
 }
 
-export function signUp(phone) {
+//TODO: bind signUp and BindAccount
+export function signUp(
+	phone,
+	authCode = null,
+	provider = null,
+	userInfo = null
+) {
 	const mutation = `
-	mutation signUp($phone: String!) {
-			  signUp(phone: $phone) {
+	mutation signUp($phone: String!, $authCode: String, $provider: LoginProvider, $userInfo: UpdateUserInfoInput) {
+			  signUp(phone: $phone, authCode: $authCode, provider: $provider, userInfo: $userInfo) {
 						token
 						me{
 						  id
@@ -88,10 +94,20 @@ export function signUp(phone) {
 		  }`;
 
 	let variables = {
-		phone: phone
+		phone: phone,
+		authCode: authCode,
+		provider: provider,
+		userInfo: userInfo
 	};
-	return execute(mutation, variables);
+	return execute(mutation, variables, null, false);
 }
+
+export function signUpBindAccount(phone, userInfo = null) {
+	return store.dispatch("getAuthCode").then(authCode => {
+		return signUp(phone, authCode, store.state.loginProvider, userInfo);
+	});
+}
+
 export function verifyToken(token) {
 	const mutation = `
 	mutation _($token: String!) {

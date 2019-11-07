@@ -2,12 +2,21 @@ import store from "@/store";
 
 var { parse } = require("parse-graphql");
 
-console.log("store: ", store);
-//console.log(store, store.state.gqlc);
-
-export function execute(query, variables = null, name = null) {
+export function execute(query, variables = null, name = null, auth = true) {
 	console.log("store in execute ", store);
-	return store.state.gqlc
+	var gqlc;
+	if (auth) {
+		gqlc = getApp().globalData.gqlc;
+		console.log("getApp: ", getApp());
+		if (!gqlc) {
+			gqlc = getApp().globalData.gqlc;
+			console.error("getApp().globalData.gqlc:", getApp().globalData.gqlc);
+			console.error("token ", store.state.token);
+		}
+	} else {
+		gqlc = store.state.gqlcNoAuth;
+	}
+	return gqlc
 		.query(query, variables)
 		.then(res => {
 			if (name === null) {
@@ -21,7 +30,10 @@ export function execute(query, variables = null, name = null) {
 					if (
 						err1.message === "You do not have permission to perform this action"
 					) {
-						console.log("need login");
+						console.log(
+							"need login ",
+							store.state.gqlc.$client._transport._$headers.Authorization
+						);
 						return uni.navigateTo({ url: "/pages/login/login" });
 					} else {
 						console.error("gql error: ", res);
@@ -48,8 +60,13 @@ export function execute(query, variables = null, name = null) {
 		});
 }
 
-export function mutate_without_result(query, variables, name) {
-	return execute(query, variables, name).then(res => {
+export function mutate_without_result(
+	query,
+	variables,
+	name = null,
+	auth = true
+) {
+	return execute(query, variables, name, auth).then(res => {
 		console.log("mutate " + name + " without result: ", res);
 		if (res.success) {
 			return name + ":ok";

@@ -13,12 +13,13 @@ var serverUrl;
 Vue.use(Vuex);
 
 if (process.env.NODE_ENV === "development") {
-	console.log("开发环境");
-	//serverUrl = "http://192.168.1.107:8000/api/gql";
-	serverUrl = "http://127.0.0.1:8000/api/gql";
+	serverUrl = "http://192.168.1.104:8000/api/gql";
+	// serverUrl = "https://jz.signver.xyz/api/gql";
+	console.log("开发环境", serverUrl);
+	//serverUrl = "http://127.0.0.1:8000/api/gql";
 } else {
-	console.log("生产环境");
 	serverUrl = "https://jz.signver.xyz/api/gql";
+	console.log("生产环境", serverUrl);
 }
 
 const store = new Vuex.Store({
@@ -30,7 +31,7 @@ const store = new Vuex.Store({
 		userInfo: null,
 		phone: null,
 		balance: null,
-		gqlc: new client({
+		gqlcNoAuth: new client({
 			uri: serverUrl,
 			//TODO: add headers? or use lokka-transport-jwt-auth?
 			headers: {}
@@ -53,13 +54,16 @@ const store = new Vuex.Store({
 		updateToken(state, token) {
 			state.token = token;
 			uni.setStorage({ key: "token", data: token });
-			this.commit("updateJwtToken", token);
 		},
 		updateJwtToken(state, token) {
 			//TODO: update and refresh jwt token
 			//https://github.com/kadirahq/lokka-transport-jwt-auth/blob/master/src/index.js
-			state.gqlc.$client._transport._$headers.Authorization = "JWT " + token;
-			// console.log("update to new token: ", gqlc.$client._transport._$headers);
+			getApp().globalData.gqlc = new client({
+				uri: serverUrl,
+				//TODO: add headers? or use lokka-transport-jwt-auth?
+				headers: { Authorization: "JWT " + token }
+			});
+			return state.gqlc;
 		},
 		updateUserInfo(state, res) {
 			//console.log("updateUserInfo for", state.loginProvider);
@@ -82,6 +86,7 @@ const store = new Vuex.Store({
 		login(state, token) {
 			state.hasLogin = true;
 			this.commit("updateToken", token);
+			return this.commit("updateJwtToken", token);
 		},
 		logout(state) {
 			state.hasLogin = false;

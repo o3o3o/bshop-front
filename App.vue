@@ -1,6 +1,9 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
+  globalData: {
+    gqlc: null
+  },
   computed: {
     ...mapState(["userInfo"])
   },

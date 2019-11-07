@@ -35,7 +35,7 @@
             <view
               class="get-code"
               :style="{ color: getCodeBtnColor }"
-              @click.stop="getCode()"
+              @click="getCode()"
               >{{ getCodeText }}</view
             >
             <input
