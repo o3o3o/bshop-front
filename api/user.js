@@ -1,16 +1,18 @@
 import { execute } from "@/api/gql.js";
 
-export function getMe() {
-	const query = `
-	  query _{
+const me_query = `
 			me{
 			 	id
 			 	avatarUrl: avatar
 			 	nickName: nickname
 			 	hasPaymentPassword
 			 	isVendor
+			  vendorName
 			}
-	}`;
+`;
+
+export function getMe() {
+	const query = "query _{" + me_query + "}";
 	return execute(query);
 }
 
@@ -25,15 +27,10 @@ export function getReceivePayQr() {
 }
 
 export function getUserInfoWithBalance() {
-	const query = `
-	  query _{
-				me{
-				 	id
-				 	avatarUrl: avatar
-				 	nickName: nickname
-				 	hasPaymentPassword
-				 	isVendor
-				}
+	const query =
+		"query _{" +
+		me_query +
+		`
         fund{
           total
           cash

@@ -1,6 +1,9 @@
 <template>
   <view>
     <view class="container">
+      <view class="uni-page-head">
+        <view class="uni-page-head-title">{{ title }}</view>
+      </view>
       <view class="qrimg"
         ><tki-qrcode
           ref="qrcode"
@@ -11,7 +14,6 @@
           :loadMake="loadMake"
         />
       </view>
-      <text v-if="userInfo.vendorName">{{ userInfo.vendorName }} </text>
     </view>
   </view>
 </template>
@@ -36,7 +38,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(["userInfo"])
+    ...mapState(["userInfo"]),
+    title() {
+      if (this.userInfo && this.userInfo.vendorName) {
+        return this.userInfo.vendorName;
+      } else {
+        return "";
+      }
+    }
   },
   methods: {},
   onLoad() {
@@ -50,7 +59,7 @@ export default {
           success: res => {
             if (res.statusCode === 200) {
               that.iconPath = res.tempFilePath;
-              //console.log("download path: ", that.iconPath);
+              console.log("download path: ", that.iconPath);
             }
           },
           complete() {
