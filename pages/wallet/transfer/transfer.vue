@@ -316,6 +316,9 @@ export default {
         .catch(err => {
           this.loading = false;
           util.showFailModal("转账失败", err);
+        })
+        .finally(() => {
+          this.paymentPassword = "";
         });
     }
   }
