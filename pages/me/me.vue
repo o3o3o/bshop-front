@@ -10,7 +10,12 @@
           ></image
         ></view>
         <view class="info-box">
-          <text class="username">{{ userInfo.nickName || "游客" }}</text>
+          <text v-if="hasLogin" class="username">{{
+            userInfo.nickName || "游客"
+          }}</text>
+          <text v-else class="username" @click="navTo('/pages/login/login')"
+            >点击登录/注册</text
+          >
         </view>
       </view>
 

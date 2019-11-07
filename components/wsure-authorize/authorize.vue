@@ -17,16 +17,21 @@
           <view class="res">
             <view>{{ NickName }}</view>
           </view>
-          <button
-            v-if="!HasAuthUserInfo"
-            class="btn"
-            open-type="getUserInfo"
-            @getuserinfo="getUserInfoData"
-          >
-            获取个人信息
-          </button>
-
-          <button v-else="" class="btn" @tap="nextSwiper(1)">下一步</button>
+          <block v-if="!HasAuthUserInfo">
+            <button
+              class="btn"
+              open-type="getUserInfo"
+              @getuserinfo="getUserInfoData"
+            >
+              获取个人信息
+            </button>
+            <view>
+              <button class="btn-nologin" @click="doNotLogin">暂不登录</button>
+            </view>
+          </block>
+          <block v-else>
+            <button class="btn" @tap="nextSwiper(1)">下一步</button>
+          </block>
         </view>
       </swiper-item>
       <swiper-item class="myCenter">
@@ -202,6 +207,9 @@ export default {
       this.swiperCurrent = e.detail.current;
     },
     Timer() {},
+    doNotLogin() {
+      uni.navigateBack();
+    },
     getCode() {
       uni.hideKeyboard();
       if (this.getCodeisWaiting) {
