@@ -22,7 +22,8 @@ var errMap = {
 	already_exist_payment_password: "支付密码已设置, 请联系客户反馈",
 	wrong_password: "密码错误",
 	not_enough_balance: "可用余额不足",
-	not_enough_balance: "提现失败"
+	not_enough_balance: "提现失败",
+	no_exist_user: "用户不存在"
 };
 
 function showTip(err, duration = 2500) {
@@ -45,6 +46,7 @@ function showFailModal(title, err) {
 	} else {
 		msg = JSON.stringify(err);
 	}
+	console.log("Fail modal: ", err, msg);
 	uni.showModal({
 		title: title,
 		content: msg,

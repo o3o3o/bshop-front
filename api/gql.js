@@ -3,15 +3,17 @@ import store from "@/store";
 var { parse } = require("parse-graphql");
 
 export function execute(query, variables = null, name = null, auth = true) {
-	console.log("store in execute ", store);
+	//console.log("store in execute ", store);
 	var gqlc;
 	if (auth) {
 		gqlc = getApp().globalData.gqlc;
-		console.log("getApp: ", getApp());
+		//console.log("getApp: ", getApp());
 		if (!gqlc) {
 			gqlc = getApp().globalData.gqlc;
+			/*
 			console.error("getApp().globalData.gqlc:", getApp().globalData.gqlc);
 			console.error("token ", store.state.token);
+			*/
 		}
 	} else {
 		gqlc = store.state.gqlcNoAuth;
@@ -30,13 +32,10 @@ export function execute(query, variables = null, name = null, auth = true) {
 					if (
 						err1.message === "You do not have permission to perform this action"
 					) {
-						console.log(
-							"need login ",
-							store.state.gqlc.$client._transport._$headers.Authorization
-						);
+						console.error("need login ", store);
 						return uni.navigateTo({ url: "/pages/login/login" });
 					} else {
-						console.error("gql error: ", res);
+						console.error("execute error: ", err1, res);
 						return Promise.reject(err1);
 					}
 				}
@@ -48,15 +47,15 @@ export function execute(query, variables = null, name = null, auth = true) {
 			} else if (res.statusCode === 400) {
 				let err = res.data.errors;
 				console.error("execute 400 faile: ", err);
-				Promise.reject(err);
+				return Promise.reject(err);
 			} else {
 				console.error("execute failed with other code: ", res);
-				Promise.reject(res);
+				return Promise.reject(res);
 			}
 		})
 		.catch(err => {
 			console.error("execute gql failed: ", err);
-			Promise.reject(err);
+			return Promise.reject(err);
 		});
 }
 
@@ -68,7 +67,7 @@ export function mutate_without_result(
 ) {
 	return execute(query, variables, name, auth).then(res => {
 		console.log("mutate " + name + " without result: ", res);
-		if (res.success) {
+		if (res && res.success) {
 			return name + ":ok";
 		} else {
 			Promise.reject(res.message);
