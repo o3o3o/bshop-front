@@ -13,10 +13,10 @@ var serverUrl;
 Vue.use(Vuex);
 
 if (process.env.NODE_ENV === "development") {
-	serverUrl = "http://192.168.1.104:8000/api/gql";
+	//serverUrl = "http://192.168.1.104:8000/api/gql";
+	serverUrl = "http://127.0.0.1:8000/api/gql";
 	// serverUrl = "https://jz.signver.xyz/api/gql";
 	console.log("开发环境", serverUrl);
-	//serverUrl = "http://127.0.0.1:8000/api/gql";
 } else {
 	serverUrl = "https://jz.signver.xyz/api/gql";
 	console.log("生产环境", serverUrl);

@@ -53,7 +53,7 @@ export default {
     // request for receivepay qr content
     //console.log("onload qr page");
     getReceivePayQr()
-      .then(res => {
+      .then(data => {
         uni.downloadFile({
           url: that.userInfo.avatarUrl,
           success: res => {
@@ -62,10 +62,15 @@ export default {
               console.log("download path: ", that.iconPath);
             }
           },
-          complete() {
-            that.val = res.qr;
+          fail: resf => {
+            console.error("failed to download avatarurl: ", resf);
+          },
+          complete: resc => {
+            console.log("complete get avatarurl: ", resc);
+            that.val = data.qr;
           }
         });
+        //that.val = data.qr;
         //console.log(that.iconPath);
         //console.log(this.val);
       })
