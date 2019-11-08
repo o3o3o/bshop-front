@@ -69,7 +69,7 @@ export default {
     }
   },
   methods: {
-    amountChange(e) {
+    amountChange() {
       if (this.amount > 0 && this.amount <= this.withdrawableAmount) {
         this.disabled_pay_btn = false;
       } else {
@@ -109,6 +109,7 @@ export default {
     },
     withdrawAll() {
       this.amount = this.withdrawableAmount;
+      this.amountChange();
     }
   }
 };

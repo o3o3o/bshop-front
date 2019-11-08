@@ -27,7 +27,7 @@
           type="primary"
           @click="requestPayment"
           :loading="loading"
-          :disabled="disabled_pay_btn"
+          :disabled="disablePayBtn"
         >
           {{ payMethod }} 支付
         </button>
@@ -95,7 +95,7 @@ export default {
       vendorName: null,
       vendorImg: "",
       loading: false,
-      disabled_pay_btn: true,
+      disablePayBtn: true,
       note: "",
       paymentPassword: "",
       showInputPwd: false,
@@ -212,9 +212,9 @@ export default {
     amountChange(e) {
       this.amount = e.detail.value;
       if (this.amount > 0 && this.amount < 100000) {
-        this.disabled_pay_btn = false;
+        this.disablePayBtn = false;
       } else {
-        this.disabled_pay_btn = true;
+        this.disablePayBtn = true;
       }
     },
     togglePayment() {
@@ -222,6 +222,7 @@ export default {
     },
     requestPayment() {
       this.loading = true;
+      this.disablePayBtn = true;
       if (this.payMethodCurrent === "balance") {
         /* pay with balance */
         this.togglePayment();
@@ -264,6 +265,9 @@ export default {
                   //console.log("用户点击确定");
                   uni.navigateBack();
                 }
+              },
+              complete() {
+                that.disablePayBtn = false;
               }
             });
           })
